@@ -83,7 +83,7 @@ class DefaultProfileValidatorFactory(ProfileValidatorFactory):
             Field(description="Loader used to instantiate custom profile validators."),
         ] = None,
         opa_engine_factory: Annotated[
-            Optional[OpaEngineFactory],
+            None | OpaEngineFactory,
             Field(description="Factory used by validators that evaluate OPA policies."),
         ] = None,
         **kwargs: Annotated[Any, Field(description="Additional factory arguments.")],

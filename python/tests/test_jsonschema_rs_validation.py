@@ -1,7 +1,7 @@
 import jsonschema_rs
+import pytest
 
 from jsonprofile.validator.json_validator import JsonValidator
-from jsonprofile.validator.opa_engine import _builtin_json_match_schema
 
 
 def test_best_match_uses_nested_jsonschema_rs_context():
@@ -28,6 +28,9 @@ def test_best_match_uses_nested_jsonschema_rs_context():
 
 
 def test_opa_json_match_schema_uses_jsonschema_rs_paths():
+    pytest.importorskip("opa_wasmtime")
+    from jsonprofile.validator.local_opa_engine import _builtin_json_match_schema
+
     valid, errors = _builtin_json_match_schema(1, {"type": "string"})
 
     assert valid is False

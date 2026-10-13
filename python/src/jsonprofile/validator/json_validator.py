@@ -41,9 +41,28 @@ from jsonprofile.validator.default.ols_cv_term_search import OlsCvTermSearch
 from jsonprofile.validator.default.profile_validator_factory import (
     DefaultProfileValidatorFactory,
 )
-from jsonprofile.validator.opa_engine import OpaEngineFactory
+from jsonprofile.validator.opa_engine import (
+    NotImplementedOpaEngineFactory,
+    OpaEngineFactory,
+)
 
 logger = logging.getLogger(__name__)
+
+_default_opa_engine_factory: None | OpaEngineFactory = None
+
+
+def get_default_opa_engine_factory() -> OpaEngineFactory:
+    global _default_opa_engine_factory
+    if _default_opa_engine_factory is None:
+        try:
+            from jsonprofile.validator.local_opa_engine import LocalOpaEngineFactory
+        except ModuleNotFoundError as ex:
+            if ex.name != "opa_wasmtime":
+                raise
+            _default_opa_engine_factory = NotImplementedOpaEngineFactory()
+        else:
+            _default_opa_engine_factory = LocalOpaEngineFactory()
+    return _default_opa_engine_factory
 
 
 class JsonValidator:
@@ -61,7 +80,8 @@ class JsonValidator:
             ),
         ],
         referenced_profiles: Annotated[
-            dict[
+            None
+            | dict[
                 str,
                 Union[str | Path, dict | JsonProfile],
             ],
@@ -71,7 +91,11 @@ class JsonValidator:
             ),
         ] = None,
         default_cv_term_search: Annotated[
-            CvTermSearch,
+            None | CvTermSearch,
+            Field(description="Default cv term search implementation "),
+        ] = None,
+        opa_engine_factory: Annotated[
+            None | OpaEngineFactory,
             Field(description="Default cv term search implementation "),
         ] = None,
     ):
@@ -108,7 +132,10 @@ class JsonValidator:
             if default_validator_definition
             else None
         )
-        self.opa_engine_factory = OpaEngineFactory()
+        self.opa_engine_factory = opa_engine_factory
+        if not opa_engine_factory:
+            self.opa_engine_factory = get_default_opa_engine_factory()
+
         profile_validator_factory_class = ".".join(
             [
                 DefaultProfileValidatorFactory.__module__,
@@ -540,7 +567,6 @@ class JsonValidator:
             wasm_file_path = opa_config.wasm_file_path
             wasm_file_download_url = opa_config.wasm_file_download_url
             entrypoint = opa_config.entrypoint
-
         engine = context.profile_validator_factory.opa_engine_factory.get_opa_engine(
             wasm_file_path=wasm_file_path,
             wasm_file_download_url=wasm_file_download_url,

@@ -13,12 +13,14 @@ dependencies = [
     "jsonschema>=4.26.0",
     "jsonschema-rs>=0.46.9",
     "ontology-lookup>=0.1.1",
-    "opa-wasmtime>=0.1.1",
     "orjson>=3.11.9",
     "pydantic>=2.12.4",
     "pyyaml>=6.0.3",
     "rfc3986>=2.0.0",
 ]
+[project.optional-dependencies]
+opa = ["opa-wasmtime>=0.1.1"]
+
 [dependency-groups]
 dev = [
     "pre-commit>=3.10.1",
