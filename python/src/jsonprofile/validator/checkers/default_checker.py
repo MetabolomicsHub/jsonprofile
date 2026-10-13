@@ -843,7 +843,9 @@ class EmailConstraintChecker(ConstraintChecker):
                 evaluation = True
             else:
                 try:
-                    email_validator.validate_email(value)
+                    email_validator.validate_email(
+                        value, check_deliverability=constraint.check_deliverability
+                    )
                     evaluation = True
                     message = "value is valid email"
                 except email_validator.EmailNotValidError:

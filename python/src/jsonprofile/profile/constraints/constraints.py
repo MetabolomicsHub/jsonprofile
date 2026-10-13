@@ -451,6 +451,11 @@ class EmailConstraint(Constraint):
 
     type: Annotated[str, Field(description="Constraint type discriminator.")] = "email"
 
+    check_deliverability: Annotated[
+        Optional[bool],
+        Field(description="Check domain deliverability"),
+    ] = None
+
 
 class UriConstraint(Constraint):
     """Validates that a string value is a well-formed URI.
