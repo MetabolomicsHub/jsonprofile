@@ -31,8 +31,8 @@ referenced_profiles = {
     [
         DEFAULT_PROFILE_ID,
         MTD_SMF_PROFILE_ID,
-        MTD_SML_PROFILE_ID,
         FULL_PROFILE_ID,
+        MTD_SML_PROFILE_ID,
         METABOLIGHTS_PROFILE_ID,
     ],
 )
@@ -55,6 +55,7 @@ def test_example_profile(profile) -> None:
 
     if result.errors:
         logger.info("%s", 120 * "-")
+        logger.info("%s", profile)
         logger.info("PROFILE VALIDATION MESSAGES")
         logger.info("%s", 120 * "-")
         for _, messages in result.errors.items():
@@ -87,5 +88,6 @@ def test_example_profile(profile) -> None:
         logger.info("%s", 120 * "-")
     else:
         logger.info("%s", 120 * "-")
+        logger.info("%s", profile)
         logger.info("SUCCESS - NO PROFILE VALIDATION MESSAGE")
         logger.info("%s", 120 * "-")

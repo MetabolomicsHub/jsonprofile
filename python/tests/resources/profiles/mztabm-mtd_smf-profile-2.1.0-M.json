@@ -19,14 +19,53 @@
       ]
     },
     "$.smallMoleculeSummary": {
-      "code": "MTD_SML-SML-0001",
-      "enforcement_level": "optional",
+      "code": "D-SML-0001",
+      "enforcement_level": "recommended",
       "value_constraint": {
         "type": "items-count",
         "min_occurs": 1
       },
-      "match_is_required": false
+      "match_is_required": true
     },
+    "$.smallMoleculeSummary[*]": {
+      "code": "D-SML-0010",
+      "enforcement_level": "required",
+      "required_properties": [
+        "prefix",
+        "header_prefix",
+        "sml_id",
+        "smf_id_refs",
+        "database_identifier",
+        "chemical_formula",
+        "smiles",
+        "inchi",
+        "chemical_name",
+        "uri",
+        "theoretical_neutral_mass",
+        "adduct_ions",
+        "reliability",
+        "best_id_confidence_measure",
+        "best_id_confidence_value"
+      ]
+    },
+    "$.smallMoleculeSummary[*].prefix": null,
+    "$.smallMoleculeSummary[*].header_prefix": null,
+    "$.smallMoleculeSummary[*].sml_id": null,
+    "$.smallMoleculeSummary[*].smf_id_refs[*]": null,
+    "$.smallMoleculeSummary[*].database_identifier[*]": null,
+    "$.smallMoleculeSummary[*].chemical_formula[*]": null,
+    "$.smallMoleculeSummary[*].smiles[*]": null,
+    "$.smallMoleculeSummary[*].inchi[*]": null,
+    "$.smallMoleculeSummary[*].chemical_name[*]": null,
+    "$.smallMoleculeSummary[*].uri[*]": null,
+    "$.smallMoleculeSummary[*].theoretical_neutral_mass[*]": null,
+    "$.smallMoleculeSummary[*].adduct_ions[*]": null,
+    "$.smallMoleculeSummary[*].best_id_confidence_measure": null,
+    "$.smallMoleculeSummary[*].best_id_confidence_value": null,
+    "$.smallMoleculeSummary[*].abundance_assay[*]": null,
+    "$.smallMoleculeSummary[*].abundance_study_variable[*]": null,
+    "$.smallMoleculeSummary[*].abundance_variation_study_variable[*]": null,
+    "$.smallMoleculeSummary[*].opt[*]": null,
     "$.smallMoleculeFeature": {
       "code": "MTD_SML-SMF-0001",
       "enforcement_level": "required",

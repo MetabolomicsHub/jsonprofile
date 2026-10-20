@@ -8,7 +8,7 @@
     "wasm_file_definitions": {
       "default": {
         "wasm_file_download_url": "https://github.com/HUPO-PSI/mzTab-M/raw/refs/heads/development/mztab_m_io/resources/mztabm-default-2.1.0-M.wasm",
-        "wasm_file_path": "tests/resources/mztabm-default-2.1.0-M.wasm",
+        "wasm_file_path": "/Users/ozgury/work/development/pymztab-m/mztab_m_io/resources/mztabm-default-2.1.0-M.wasm",
         "entrypoint": "mztabm/policies"
       }
     }
@@ -421,7 +421,7 @@
         "case_sensitive": true
       }
     },
-    "$.metadata.uri[*]": {
+    "$.metadata.uri[*].value": {
       "code": "D-MTD-CONTACT-URI-0010",
       "enforcement_level": "required",
       "value_constraint": {
@@ -438,7 +438,7 @@
         ]
       }
     },
-    "$.metadata.external_study_uri[*]": {
+    "$.metadata.external_study_uri[*].value": {
       "code": "D-MTD-CONTACT-EXTERNAL_STUDY_URI-0010",
       "enforcement_level": "required",
       "value_constraint": {

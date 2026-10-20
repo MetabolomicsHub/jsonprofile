@@ -100,7 +100,7 @@ class JsonValidator:
         ] = None,
     ):
 
-        logger.info("Json schema will be loaded.")
+        logger.debug("Json schema will be loaded.")
         self.json_schema = self.load_jsonschema(json_schema)
         self.validate_jsonschema(self.json_schema)
         logger.debug("Json schema validated.")
@@ -374,7 +374,7 @@ class JsonValidator:
     def validate_json_with_schema(
         self, json_data: dict, context: JsonProfileRunContext
     ) -> None:
-        logging.info("Json schema validation started.")
+        logging.debug("Json schema validation started.")
         start = time.perf_counter()
 
         for error in sorted(self.schema_validator.iter_errors(json_data), key=str):
