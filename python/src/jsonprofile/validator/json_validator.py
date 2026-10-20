@@ -263,7 +263,8 @@ class JsonValidator:
             )
             return input_profile
         logger.info(
-            "Profile %s extends %s profile. Updating configuration and requirements.",
+            "Profile '%s' extends '%s' profile. "
+            "Updating configuration and requirements.",
             input_profile.name,
             parent_profile.name,
         )
@@ -318,9 +319,9 @@ class JsonValidator:
                 )
             input_profile.requirements[key] = value
         if merge_actions:
-            logger.info("Profile merge results:")
+            logger.debug("Profile merge results:")
             for action in merge_actions:
-                logger.info(action)
+                logger.debug(action)
         return input_profile
 
     @staticmethod
@@ -391,6 +392,7 @@ class JsonValidator:
                 ),
             )
         end = time.perf_counter()
+        logging.info("Json schema validation ended.")
         if end > start + 1:
             logger.warning(
                 "Json data is validated with its source jsonschema in %.6f seconds",
@@ -469,7 +471,7 @@ class JsonValidator:
             json_path_eval_start = time.perf_counter()
             json_path = json_path or "$"
             if not requirement_definition:
-                logger.info(
+                logger.debug(
                     "Skipping key. Field requirement is not defined for '%s'", json_path
                 )
                 continue

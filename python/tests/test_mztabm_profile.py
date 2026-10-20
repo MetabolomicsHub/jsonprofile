@@ -2,29 +2,49 @@ import logging
 import pathlib
 
 import orjson
+import pytest
 
 from jsonprofile.profile.base import EnforcementLevel, ValidationRuntimeConfiguration
 from jsonprofile.utils import setup_basic_logging_config
 from jsonprofile.validator import JsonValidator
 
 logger = logging.getLogger(__name__)
+DEFAULT_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-default-profile-2.1.0-M.json"
+MTD_SMF_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-mtd_smf-profile-2.1.0-M.json"
+MTD_SML_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-mtd_sml-profile-2.1.0-M.json"
+FULL_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-full-profile-2.1.0-M.json"
+METABOLIGHTS_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-metabolights-profile-2.1.0-M.json"
 
-
-def test_example_profile() -> None:
-    setup_basic_logging_config()
-    mtbls_profile_file = (
+referenced_profiles = {
+    DEFAULT_PROFILE_ID: "tests/resources/profiles/mztabm-default-profile-2.1.0-M.json",
+    MTD_SMF_PROFILE_ID: "tests/resources/profiles/mztabm-mtd_smf-profile-2.1.0-M.json",
+    MTD_SML_PROFILE_ID: "tests/resources/profiles/mztabm-mtd_sml-profile-2.1.0-M.json",
+    FULL_PROFILE_ID: "tests/resources/profiles/mztabm-full-profile-2.1.0-M.json",
+    METABOLIGHTS_PROFILE_ID: (
         "tests/resources/profiles/mztabm-metabolights-profile-2.1.0-M.json"
-    )
-    default_profile_id = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-default-profile-2.1.0-M.json"
-    default_profile_path = (
-        "tests/resources/profiles/mztabm-default-profile-2.1.0-M.json"
-    )
+    ),
+}
+
+
+@pytest.mark.parametrize(
+    "profile",
+    [
+        DEFAULT_PROFILE_ID,
+        MTD_SMF_PROFILE_ID,
+        MTD_SML_PROFILE_ID,
+        FULL_PROFILE_ID,
+        METABOLIGHTS_PROFILE_ID,
+    ],
+)
+def test_example_profile(profile) -> None:
+    setup_basic_logging_config()
+
+    profile_path = referenced_profiles.get(profile)
     input_json = "tests/data/manual_null_MTBLS263.mztab.json"
     json_schema_path = "tests/resources/mztabm-2.1.0-M.schema.json"
-    referenced_profiles = {default_profile_id: default_profile_path}
     validator = JsonValidator(
         json_schema=json_schema_path,
-        profile=mtbls_profile_file,
+        profile=profile_path,
         referenced_profiles=referenced_profiles,
     )
 

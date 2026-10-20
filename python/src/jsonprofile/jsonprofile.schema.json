@@ -2158,7 +2158,6 @@
               "type": "number"
             },
             {
-              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
               "type": "string"
             },
             {
@@ -2175,7 +2174,6 @@
               "type": "number"
             },
             {
-              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
               "type": "string"
             },
             {
@@ -2393,6 +2391,19 @@
           "default": null,
           "description": "Values that bypass this constraint. If the input value is in this list, the constraint evaluates as valid.",
           "title": "Exceptional Values"
+        },
+        "check_deliverability": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Check domain deliverability",
+          "title": "Check Deliverability"
         }
       },
       "title": "EmailConstraint",
@@ -5303,6 +5314,9 @@
         {
           "additionalProperties": {
             "anyOf": [
+              {
+                "$ref": "#/$defs/OpaFieldRequirement"
+              },
               {
                 "$ref": "#/$defs/FieldRequirementGroup"
               },

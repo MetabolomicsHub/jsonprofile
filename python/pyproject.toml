@@ -3,14 +3,14 @@ name = "jsonprofile"
 version = "0.1.0"
 description = "Dynamic profile management for json files share same schema"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "bioregistry>=0.13.64",
     "cachetools>=7.1.4",
     "email-validator>=2.3.0",
     "httpx2>=0.28.1",
     "jsonpath-ng>=1.8.0",
-    "jsonschema>=4.26.0",
+    # "jsonschema>=4.26.0",
     "jsonschema-rs>=0.46.9",
     "ontology-lookup>=0.1.1",
     "orjson>=3.11.9",
