@@ -15,13 +15,14 @@ MTD_SML_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profi
 FULL_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-full-profile-2.1.0-M.json"
 METABOLIGHTS_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-metabolights-profile-2.1.0-M.json"
 
+PROFILES_PATH = "tests/resources/mztab-m/profiles"
 referenced_profiles = {
-    DEFAULT_PROFILE_ID: "tests/resources/profiles/mztabm-default-profile-2.1.0-M.json",
-    MTD_SMF_PROFILE_ID: "tests/resources/profiles/mztabm-mtd_smf-profile-2.1.0-M.json",
-    MTD_SML_PROFILE_ID: "tests/resources/profiles/mztabm-mtd_sml-profile-2.1.0-M.json",
-    FULL_PROFILE_ID: "tests/resources/profiles/mztabm-full-profile-2.1.0-M.json",
+    DEFAULT_PROFILE_ID: f"{PROFILES_PATH}/mztabm-default-profile-2.1.0-M.json",
+    MTD_SMF_PROFILE_ID: f"{PROFILES_PATH}/mztabm-mtd_smf-profile-2.1.0-M.json",
+    MTD_SML_PROFILE_ID: f"{PROFILES_PATH}/mztabm-mtd_sml-profile-2.1.0-M.json",
+    FULL_PROFILE_ID: f"{PROFILES_PATH}/mztabm-full-profile-2.1.0-M.json",
     METABOLIGHTS_PROFILE_ID: (
-        "tests/resources/profiles/mztabm-metabolights-profile-2.1.0-M.json"
+        f"{PROFILES_PATH}/mztabm-metabolights-profile-2.1.0-M.json"
     ),
 }
 
@@ -41,7 +42,7 @@ def test_example_profile(profile) -> None:
 
     profile_path = referenced_profiles.get(profile)
     input_json = "tests/data/manual_null_MTBLS263.mztab.json"
-    json_schema_path = "tests/resources/mztabm-2.1.0-M.schema.json"
+    json_schema_path = "tests/resources/mztab-m/mztabm-2.1.0-M.schema.json"
     validator = JsonValidator(
         json_schema=json_schema_path,
         profile=profile_path,

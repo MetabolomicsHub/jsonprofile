@@ -69,7 +69,7 @@ class JsonValidator:
     def __init__(
         self,
         json_schema: Annotated[
-            str | Path | dict,
+            None | str | Path | dict,
             Field(description="Json schema file path for the profile."),
         ],
         profile: Annotated[
@@ -101,10 +101,19 @@ class JsonValidator:
     ):
 
         logger.debug("Json schema will be loaded.")
-        self.json_schema = self.load_jsonschema(json_schema)
-        self.validate_jsonschema(self.json_schema)
-        logger.debug("Json schema validated.")
-        self.schema_validator = jsonschema_rs.validator_for(self.json_schema)
+        self.json_schema = None
+        self.schema_validator = None
+        if json_schema:
+            self.json_schema = self.load_jsonschema(json_schema)
+            self.validate_jsonschema(self.json_schema)
+            logger.debug("Json schema validated.")
+            self.schema_validator = jsonschema_rs.validator_for(self.json_schema)
+        else:
+            logger.warning(
+                "Json schema is not provided. "
+                "Validator will skip json schema validation."
+            )
+
         self.referenced_profiles = (
             referenced_profiles if referenced_profiles is not None else {}
         )
@@ -400,7 +409,9 @@ class JsonValidator:
             )
 
     def create_context(
-        self, runtime_config: None | ValidationRuntimeConfiguration = None
+        self,
+        runtime_config: None | ValidationRuntimeConfiguration = None,
+        unique_id_objects: None | dict[str, dict] = None,
     ) -> JsonProfileRunContext:
         runtime_config = runtime_config or ValidationRuntimeConfiguration()
         profile_config = self.json_profile.configuration or JsonProfileConfiguration()
@@ -414,6 +425,7 @@ class JsonValidator:
                 runtime_config.max_messages_for_each_requirement
             ),
             json_path_expressions=self.json_path_expressions,
+            unique_id_objects=unique_id_objects,
         )
 
     def validate_jsonschema(
@@ -443,17 +455,61 @@ class JsonValidator:
             for req in requirement.requirements:
                 self.find_all_constraints(req, constraints)
 
+    def update_unique_object_dict(
+        self,
+        object_path: str,
+        object_item: Any,
+        id_fields: list[str],
+        objects: None | dict[str, dict] = None,
+    ):
+        if objects is None:
+            objects = {}
+        if isinstance(object_item, list):
+            for idx, x in enumerate(object_item):
+                subitem_path = object_path + f"[{idx}]"
+                self.update_unique_object_dict(subitem_path, x, id_fields, objects)
+        elif isinstance(object_item, dict):
+            for field_name, val in object_item.items():
+                item_path = f"{object_path}.{field_name}"
+                if field_name in id_fields and len(object_item) > 1:
+                    if not val:
+                        logger.warning("%s value is not defined", item_path)
+                    else:
+                        if val in objects:
+                            logger.warning(
+                                "%s '%s' id is already defined.", item_path, val
+                            )
+                        else:
+                            objects[val] = object_item
+                if isinstance(val, dict):
+                    self.update_unique_object_dict(item_path, val, id_fields, objects)
+                elif isinstance(val, list):
+                    for idx, x in enumerate(val):
+                        subitem_path = item_path + f"[{idx}]"
+                        self.update_unique_object_dict(
+                            subitem_path, x, id_fields, objects
+                        )
+        return objects
+
     def validate_dict(
         self,
         input_json: dict,
         runtime_config: None | ValidationRuntimeConfiguration = None,
         process_reporting_threshold_in_secs: float = 5.0,
     ) -> JsonValidationResult:
+        id_fields = self.json_profile.configuration.object_unique_id_fields
         if not runtime_config:
             runtime_config = ValidationRuntimeConfiguration()
+        unique_id_objects = {}
+        if id_fields:
+            unique_id_objects = self.update_unique_object_dict(
+                "$", input_json, id_fields=id_fields
+            )
         runtime_config.skipped_requirements = runtime_config.skipped_requirements or []
-        context = self.create_context(runtime_config=runtime_config)
-        if not runtime_config.skip_jsonschema_validation:
+        context = self.create_context(
+            runtime_config=runtime_config, unique_id_objects=unique_id_objects
+        )
+        if not runtime_config.skip_jsonschema_validation and self.schema_validator:
             self.validate_json_with_schema(json_data=input_json, context=context)
         else:
             logger.info("Jsonschema validation is skipped")
@@ -730,7 +786,6 @@ class JsonValidator:
                     group_message_collector=sub_message_collector,
                 )
             instances = {}
-
             for (
                 source_json_path,
                 messages_dict,
@@ -745,6 +800,15 @@ class JsonValidator:
                     ]
                     if items:
                         instances[source_json_path][code] = items
+                    items = [
+                        x
+                        for x in messages
+                        if x.enforcement_level != EnforcementLevel.REQUIRED
+                    ]
+
+                    for item in items or []:
+                        group_message_collector.add_message(item.source, item)
+
             valid_requirements = {}
             for source, message_list in instances.items():
                 valid_reqs = len(field_requirement.requirements) - len(message_list)
@@ -772,6 +836,7 @@ class JsonValidator:
                     for items in message_list.values():
                         for message in items:
                             group_message_collector.add_message(message.source, message)
+
             return
         runtime_config = context.runtime_config
 
@@ -833,7 +898,8 @@ class JsonValidator:
                             category=Category.PROFILE,
                             name="property-check",
                             enforcement_level=EnforcementLevel.REQUIRED,
-                            message=f"Property check failed. '{source}' is not object.",
+                            message="Property check failed. "
+                            f"'{source}' is not defined.",
                         ),
                     )
 

@@ -256,6 +256,13 @@ class JsonProfileConfiguration(BaseProfileConfiguration):
         ),
     ] = None
 
+    object_unique_id_fields: Annotated[
+        Optional[list[str]],
+        Field(
+            description="Field name of objects to identify them. e.g. @id, uri, etc."
+        ),
+    ] = None
+
 
 class JsonProfile(JsonProfileBaseModel):
     """A JSON profile containing metadata, configuration, and field requirements."""

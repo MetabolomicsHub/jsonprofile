@@ -81,6 +81,14 @@ class Constraint(abc.ABC, JsonProfileBaseModel):
             "constraint. If omitted, the current value is used."
         ),
     ] = None
+    is_reference_field: Annotated[
+        Optional[bool],
+        Field(
+            description="Is the value a reference id that points "
+            "to an object in the json. If it is true, referenced object will be "
+            "evaluated. Referenced object MUST be indexed before validation."
+        ),
+    ] = None
 
     default_precondition_evaluation: Annotated[
         Optional[bool],
@@ -768,6 +776,14 @@ class Evaluation(JsonProfileBaseModel):
             description="JSONPath used to select the value for this evaluation. If "
             "omitted, either the root document or current value is used depending on "
             "root_value_evaluation."
+        ),
+    ] = None
+    is_reference_field: Annotated[
+        Optional[bool],
+        Field(
+            description="Is the value a reference id that points "
+            "to an object in the json. If it is true, referenced object will be "
+            "evaluated. Referenced object MUST be indexed before validation."
         ),
     ] = None
     constraint: Annotated[

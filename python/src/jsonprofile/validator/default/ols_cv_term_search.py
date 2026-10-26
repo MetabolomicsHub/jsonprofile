@@ -107,6 +107,8 @@ class OlsCvTermSearch(CvTermSearch):
             accession.startswith("http://") or accession.startswith("https://")
         ):
             curie = bioregistry.curie_from_iri(accession)
+        if not curie:
+            return None, []
 
         params = {
             "q": curie.lower(),
@@ -272,7 +274,7 @@ class OlsCvTermSearch(CvTermSearch):
                 allow_synonym_search=allow_synonym_search,
             )
             if not term:
-                return False, f"CV term {cv_term.cv_accession} not found"
+                return False, f"CV term '{cv_term}' is not found"
             return True, ""
         if parent_cv_term:
             if (

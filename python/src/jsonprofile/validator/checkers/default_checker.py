@@ -238,7 +238,7 @@ class CollectionConstraintChecker(ConstraintChecker):
             collection_values = []
             values: list[dict[str, Any]] = []
             for item_json_path in constraint.item_value_jsonpath_list or []:
-                item_json_path = self.join_json_path(item_json_path)
+                item_json_path = self.join_json_path(item_json_path, None, value)
                 item_values = {}
                 values.append(item_values)
                 json_expression = context.json_path_expressions.get(item_json_path)
@@ -260,6 +260,8 @@ class CollectionConstraintChecker(ConstraintChecker):
         max_match_req = False
         min_referenced_value_req = False
         max_referenced_value_req = False
+        matched_set = set()
+        unmatched_set = set()
         if value is None:
             if constraint.exceptional_values and value in constraint.exceptional_values:
                 min_req = True
@@ -336,8 +338,7 @@ class CollectionConstraintChecker(ConstraintChecker):
                         constraint.item_value_match_constraint
                     )
                     matched = []
-                    matched_set = set()
-                    unmatched_set = set()
+
                     if not constraint.item_value_match_constraint.description:
                         constraint.item_value_match_constraint.description = (
                             constraint.description
@@ -364,14 +365,16 @@ class CollectionConstraintChecker(ConstraintChecker):
 
                     refs = []
                     for sub in constraint.item_value_jsonpath_list or []:
-                        refs.append(self.join_json_path(constraint.json_path, sub))
+                        refs.append(
+                            self.join_json_path(constraint.json_path, sub, value)
+                        )
 
                     if constraint.min_match is not None:
                         if matched_count >= constraint.min_match:
                             min_match_req = True
                         else:
                             messages.append(
-                                f"Minimum items matched error in {', '.join(refs)}. "
+                                f"Minimum items error in {', '.join(refs)}. "
                                 f"Matched count: {matched_count}, "
                                 f"expected : {constraint.min_match} "
                             )
@@ -382,7 +385,7 @@ class CollectionConstraintChecker(ConstraintChecker):
                             max_match_req = True
                         else:
                             messages.append(
-                                f"Maximum items matched error in {', '.join(refs)}. "
+                                f"Maximum items error in {', '.join(refs)}. "
                                 "Matched count: "
                                 f"{matched_count} of {len(item_values)}, "
                                 f"expected : {constraint.max_match} "
@@ -429,14 +432,9 @@ class CollectionConstraintChecker(ConstraintChecker):
                                 f"{matched_count} of {len(item_values)}, "
                                 f"'{', '.join(refs)}'"
                             )
-                    else:
-                        if not unmatched_set:
-                            max_referenced_value_req = True
-                        else:
-                            messages.append(
-                                "Unmatched values "
-                                f"{', '.join([str(x) for x in unmatched_set])}"
-                            )
+                    elif min_referenced_value_req or not unmatched_set:
+                        max_referenced_value_req = True
+
                 else:
                     min_match_req = True
                     max_match_req = True
@@ -453,6 +451,10 @@ class CollectionConstraintChecker(ConstraintChecker):
                 max_referenced_value_req,
             ]
         )
+        if not all_results and unmatched_set:
+            messages.append(
+                f"Unmatched values {', '.join([str(x) for x in unmatched_set])}"
+            )
         evaluation = True if all_results else False
         if constraint.negated:
             evaluation = not evaluation
@@ -1037,56 +1039,25 @@ class CVListConstraintChecker(ConstraintChecker):
                 message = f"Value '{value}' could not be parsed as a CV term."
             else:
                 message = ""
-                is_user_defined = (
-                    not param.cv_label and not param.cv_accession and param.name
-                )
-                if is_user_defined:
-                    if constraint.allow_user_defined_terms:
-                        name_req = True
-                        message = "User-defined terms is allowed."
+                if param.name:
+                    if not param.cv_label or not param.cv_accession:
+                        message = f" '{param}' invalid cv term label or accession."
                     else:
-                        message = "User-defined terms is not allowed."
-                else:
-                    if param.name:
-                        if not param.cv_label or not param.cv_accession:
-                            message = f" '{param}' invalid cv term label or accession."
-                        else:
-                            if constraint.exceptional_values:
-                                base_param = BaseCvTerm.model_validate(
-                                    param, from_attributes=True, context=context
+                        if constraint.exceptional_values:
+                            base_param = BaseCvTerm.model_validate(
+                                param, from_attributes=True, context=context
+                            )
+                            if base_param in constraint.exceptional_values:
+                                name_req = True
+                                message = (
+                                    f"'{param}' term is in exception cv term list."
                                 )
-                                if base_param in constraint.exceptional_values:
-                                    name_req = True
-                                    message = (
-                                        f"'{param}' term is in exception cv term list."
-                                    )
-                            if not name_req:
-                                if constraint.allowed_cv_list:
-                                    if param.cv_label.upper() in [
-                                        x.upper() for x in constraint.allowed_cv_list
-                                    ]:
-                                        if runtime_config.offline_mode:
-                                            name_req = True
-                                            message = "offline mode."
-                                        else:
-                                            verified, message = (
-                                                cv_term_search.check_cv_term(
-                                                    param,
-                                                    allow_synonym_search=True
-                                                    if constraint.allow_synonym
-                                                    else False,
-                                                )
-                                            )
-                                            return verified, self.format_message(
-                                                constraint, message
-                                            )
-                                    else:
-                                        message = (
-                                            f"'{param}' not in the selected cv list: "
-                                            f"{', '.join(constraint.allowed_cv_list)}"
-                                        )
-                                else:
-                                    if runtime_config and runtime_config.offline_mode:
+                        if not name_req:
+                            if constraint.allowed_cv_list:
+                                if param.cv_label.upper() in [
+                                    x.upper() for x in constraint.allowed_cv_list
+                                ]:
+                                    if runtime_config.offline_mode:
                                         name_req = True
                                         message = "offline mode."
                                     else:
@@ -1101,9 +1072,28 @@ class CVListConstraintChecker(ConstraintChecker):
                                         return verified, self.format_message(
                                             constraint, message
                                         )
+                                else:
+                                    message = (
+                                        f"'{param}' not in the selected cv list: "
+                                        f"{', '.join(constraint.allowed_cv_list)}"
+                                    )
+                            else:
+                                if runtime_config and runtime_config.offline_mode:
+                                    name_req = True
+                                    message = "offline mode."
+                                else:
+                                    verified, message = cv_term_search.check_cv_term(
+                                        param,
+                                        allow_synonym_search=True
+                                        if constraint.allow_synonym
+                                        else False,
+                                    )
+                                    return verified, self.format_message(
+                                        constraint, message
+                                    )
 
-                    else:
-                        message = "invalid cv term name."
+                else:
+                    message = "invalid cv term name."
 
                 messages = [message] if message else []
 
@@ -1146,50 +1136,42 @@ class CVTermEnumConstraintChecker(ConstraintChecker):
             param = _extract_cv_info(value, mapping=mapping)
             name_req = False
             value_req = False
+            name_only_enums = [
+                x for x in constraint.allowed_cv_terms if not x.cv_accession
+            ]
             if not param:
                 message = f"Value '{value}' is not a CV term."
             elif not param.cv_label and not param.cv_accession and not param.name:
                 message = f"Value '{value}' could not be parsed as a CV term."
             else:
-                is_user_defined = (
-                    not param.cv_label and not param.cv_accession and param.name
-                )
-                if is_user_defined:
-                    if constraint.allow_user_defined_terms:
-                        name_req = True
-                        message = "User-defined terms is allowed."
+                if param.name:
+                    if not name_only_enums and (
+                        not param.cv_label or not param.cv_accession
+                    ):
+                        message = f"invalid cv term label or accession '{param}'."
                     else:
-                        message = "User-defined terms is not allowed."
-                else:
-                    if param.name:
-                        if not param.cv_label or not param.cv_accession:
-                            message = "invalid cv term label or accession."
-                        else:
-                            if constraint.exceptional_cv_list:
-                                if param.cv_label in constraint.exceptional_cv_list:
-                                    name_req = True
-                                    message = (
-                                        f"term '{param.cv_label}' is "
-                                        "in exception cv list."
-                                    )
-                            if not name_req:
-                                if constraint.allowed_cv_terms:
-                                    input_val = BaseCvTerm.model_validate(
-                                        param, from_attributes=True
-                                    )
+                        if constraint.exceptional_cv_list:
+                            if param.cv_label in constraint.exceptional_cv_list:
+                                name_req = True
+                                message = (
+                                    f"term '{param.cv_label}' is in exception cv list."
+                                )
+                        if not name_req:
+                            if constraint.allowed_cv_terms:
+                                input_val = BaseCvTerm.model_validate(
+                                    param, from_attributes=True
+                                )
 
-                                    if input_val in constraint.allowed_cv_terms:
-                                        name_req = True
-                                        message = f"'{input_val}' is in cv term list"
-                                    else:
-                                        message = (
-                                            f"'{input_val}' is not in cv term list"
-                                        )
-                                else:
+                                if input_val in constraint.allowed_cv_terms:
                                     name_req = True
-                                    message = "term in cv term list"
-                    else:
-                        message = "invalid cv term name"
+                                    message = f"'{input_val}' is in cv term list"
+                                else:
+                                    message = f"'{input_val}' is not in cv term list"
+                            else:
+                                name_req = True
+                                message = "term in cv term list"
+                else:
+                    message = "invalid cv term name"
 
                 messages = [message] if message else []
 
@@ -1239,67 +1221,53 @@ class ParentCVTermConstraintChecker(ConstraintChecker):
             elif not param.cv_label and not param.cv_accession and not param.name:
                 message = f"Value '{value}' could not be parsed as a CV term."
             else:
-                is_user_defined = (
-                    not param.cv_label and not param.cv_accession and param.name
-                )
-                if is_user_defined:
-                    if constraint.allow_user_defined_terms:
-                        name_req = True
-                        message = "User-defined terms is allowed."
+                if param.name:
+                    if not param.cv_label or not param.cv_accession:
+                        message = f"invalid cv term label or accession '{param}'."
                     else:
-                        message = "User-defined terms is not allowed."
-                else:
-                    if param.name:
-                        if not param.cv_label or not param.cv_accession:
-                            message = "invalid cv term label or accession."
-                        else:
-                            if constraint.exceptional_values:
-                                if param in constraint.exceptional_values:
-                                    name_req = True
-                                    message = "cv term is in exception list."
-                            if not name_req:
-                                if runtime_config and runtime_config.offline_mode:
-                                    name_req = True
-                                    message = "offline mode."
-                                else:
-                                    verified_parent = None
-                                    for parent in constraint.parent_cv_terms or []:
-                                        verified, message = (
-                                            cv_term_search.check_cv_term(
-                                                cv_term=param,
-                                                parent_cv_term=parent,
-                                                allow_synonym_search=True
-                                                if constraint.allow_synonym
-                                                else False,
-                                            )
-                                        )
-                                        if verified:
-                                            verified_parent = parent
-                                            break
-                                    if verified_parent:
-                                        name_req = True
-                                        message = (
-                                            f"CV term {param} is "
-                                            f"parent of {verified_parent}."
-                                        )
-                                    else:
-                                        message = "term in cv term list."
-
-                                if constraint.parent_cv_terms:
-                                    input_val = BaseCvTerm.model_validate(
-                                        param, from_attributes=True
+                        if constraint.exceptional_values:
+                            if param in constraint.exceptional_values:
+                                name_req = True
+                                message = "cv term is in exception list."
+                        if not name_req:
+                            if runtime_config and runtime_config.offline_mode:
+                                name_req = True
+                                message = "offline mode."
+                            else:
+                                verified_parent = None
+                                for parent in constraint.parent_cv_terms or []:
+                                    verified, message = cv_term_search.check_cv_term(
+                                        cv_term=param,
+                                        parent_cv_term=parent,
+                                        allow_synonym_search=True
+                                        if constraint.allow_synonym
+                                        else False,
                                     )
-                                    if input_val in (
-                                        constraint.exceptional_values or []
-                                    ):
-                                        name_req = True
-                                    else:
-                                        message = "not in cv term list."
-                                else:
+                                    if verified:
+                                        verified_parent = parent
+                                        break
+                                if verified_parent:
                                     name_req = True
-                                    message = "term in cv term list."
-                    else:
-                        message = "invalid cv term name."
+                                    message = (
+                                        f"CV term {param} is "
+                                        f"parent of {verified_parent}."
+                                    )
+                                else:
+                                    message = "term in not child of the parent."
+
+                            if constraint.parent_cv_terms:
+                                input_val = BaseCvTerm.model_validate(
+                                    param, from_attributes=True
+                                )
+                                if input_val in (constraint.exceptional_values or []):
+                                    name_req = True
+                                else:
+                                    message = "not child of the parent."
+                            else:
+                                name_req = True
+                                message = "not child of the parent."
+                else:
+                    message = "invalid cv term name."
 
                 messages = [message] if message else []
 

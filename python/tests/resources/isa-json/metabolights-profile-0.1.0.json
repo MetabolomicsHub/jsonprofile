@@ -1,0 +1,879 @@
+{
+  "id": "https://github.com/ISA-tools/isa-api/metabolights-profile-0.1.0.json",
+  "version": "0.1.0",
+  "name": "ISA-JSON file profile for MetaboLights",
+  "description": "ISA-JSON file profile for MetaboLights",
+  "configuration": {
+    "cv_term_field_mapping": {
+      "label_field": "termSource",
+      "accession_field": "termAccession",
+      "name_field": "annotationValue",
+      "value_field": "value"
+    },
+    "object_unique_id_fields": [
+      "@id"
+    ]
+  },
+  "requirements": {
+    "$": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-00100",
+          "enforcement_level": "required",
+          "required_properties": [
+            "ontologySourceReferences",
+            "studies"
+          ]
+        }
+      ]
+    },
+    "$.ontologySourceReferences[*]": {
+      "code": "M-00200",
+      "description": "Ontology source reference name must be defined.",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name"
+      ]
+    },
+    "$.ontologySourceReferences[*].name": {
+      "code": "M-00210",
+      "description": "Ontology source reference name must be defined.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "null_values": [
+          null,
+          "null",
+          "",
+          "\"\"",
+          "''"
+        ],
+        "minimum": 1
+      }
+    },
+    "$.studies": {
+      "code": "M-00300",
+      "description": "Exactly 1 study must be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1,
+        "max_occurs": 1
+      }
+    },
+    "$.studies[0]": {
+      "code": "M-003101",
+      "description": "Exactly 1 study must be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "required_properties": [
+        "filename",
+        "identifier",
+        "title",
+        "description",
+        "submissionDate",
+        "publicReleaseDate",
+        "factors",
+        "assays",
+        "protocols",
+        "studyDesignDescriptors",
+        "people",
+        "materials",
+        "characteristicCategories"
+      ]
+    },
+    "$.studies[0].identifier": {
+      "code": "M-00304",
+      "description": "study identifier MUST have MTBLS, REQ or MHD prefix, and end with digits. e.g., MTBLS1, REQ202610220111.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "regex",
+        "pattern": "^(MTBLS|REQ|MHD)\\d$",
+        "case_sensitive": true
+      }
+    },
+    "$.studies[0].title": {
+      "code": "M-00305",
+      "description": "Study title MUST be equal or grater than 10 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "minimum": 10
+      }
+    },
+    "$.studies[0].description": {
+      "code": "M-00306",
+      "description": "Study description MUST be equal or grater than 150 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "minimum": 150
+      }
+    },
+    "$.studies[0].filename": {
+      "code": "M-00307",
+      "description": "Study file name must start 's_' and follow study identifier and '.txt' extension. e.g. s_REQ11111.txt, s_MTBLS1.txt.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "regex",
+        "pattern": "^s_(MTBLS|REQ|MHD)\\d\\.txt$",
+        "case_sensitive": true
+      }
+    },
+    "$.studies[0].factors": {
+      "code": "M-000308",
+      "description": "At least one factor MUST be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].assays": {
+      "code": "M-000308",
+      "description": "At least one assay MUST be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].characteristicCategories": {
+      "code": "M-000309",
+      "description": "At least one characteristic category MUST be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].people": {
+      "code": "M-000310",
+      "description": "At least one contact MUST be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].studyDesignDescriptors": {
+      "code": "M-000311",
+      "description": "At least 3 design descriptors MUST be defined.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 3
+      }
+    },
+    "$.studies[0].characteristicCategories[*].characteristicType": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000316",
+          "description": "If there is a characteristic type 'Organism', It MUST be defined as [NCIT, http://purl.obolibrary.org/obo/NCIT_C14250, Organism]. Term is not valid",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term-enum",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "annotationValue",
+                  "constraint": {
+                    "type": "regex",
+                    "pattern": "^organism$",
+                    "case_sensitive": false
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "allowed_cv_terms": [
+              {
+                "cv_label": "NCIT",
+                "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C14250",
+                "name": "Organism"
+              }
+            ]
+          }
+        },
+        {
+          "code": "M-000317",
+          "description": "If there is a characteristic type 'Organism Part', It MUST be defined as [NCIT, http://purl.obolibrary.org/obo/NCIT_C103199, Organism Part]Term is not valid",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term-enum",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "annotationValue",
+                  "constraint": {
+                    "type": "regex",
+                    "pattern": "^organism part$",
+                    "case_sensitive": false
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "allowed_cv_terms": [
+              {
+                "cv_label": "NCIT",
+                "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C103199",
+                "name": "Organism Part"
+              }
+            ]
+          }
+        },
+        {
+          "code": "M-000318",
+          "description": "If there is a characteristic type 'cell type', It MUST be defined as [EFO, http://www.ebi.ac.uk/efo/EFO_0000324, cell type]. Term is not valid",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term-enum",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "annotationValue",
+                  "constraint": {
+                    "type": "regex",
+                    "pattern": "^cell type$",
+                    "case_sensitive": false
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "allowed_cv_terms": [
+              {
+                "cv_label": "EFO",
+                "cv_accession": "http://www.ebi.ac.uk/efo/EFO_0000324",
+                "name": "cell type"
+              }
+            ]
+          }
+        },
+        {
+          "code": "M-000319",
+          "description": "If there is a characteristic type 'disease', It MUST be defined as [MONDO, http://purl.obolibrary.org/obo/MONDO_00000019, disease]. Term is not valid",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term-enum",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "annotationValue",
+                  "constraint": {
+                    "type": "regex",
+                    "pattern": "^disease$",
+                    "case_sensitive": false
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "allowed_cv_terms": [
+              {
+                "cv_label": "MONDO",
+                "cv_accession": "http://purl.obolibrary.org/obo/MONDO_00000019",
+                "name": "disease"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "$.studies[0].materials": {
+      "code": "M-000320",
+      "description": "sources and samples are required in study",
+      "enforcement_level": "required",
+      "required_properties": [
+        "sources",
+        "samples"
+      ]
+    },
+    "$.studies[0].materials.sources": {
+      "code": "M-000321",
+      "description": "There must be at least one source material",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].materials.sources[*]": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000322",
+          "description": "Source material must have a characteristic value with type [NCIT, http://purl.obolibrary.org/obo/NCIT_C14250, Organism]",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "items-count",
+            "json_path": "characteristics[*].category[\"@id\"]",
+            "is_reference_field": true,
+            "item_value_jsonpath_list": [
+              "characteristicType"
+            ],
+            "item_value_match_constraint": {
+              "type": "cv-term-enum",
+              "allowed_cv_terms": [
+                {
+                  "cv_label": "NCIT",
+                  "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C14250",
+                  "name": "Organism"
+                }
+              ]
+            },
+            "min_match": 1
+          }
+        },
+        {
+          "code": "M-000323",
+          "description": "Source material must have a characteristic value with type [NCIT, http://purl.obolibrary.org/obo/NCIT_C103199, Organism Part]",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "items-count",
+            "json_path": "characteristics[*].category[\"@id\"]",
+            "is_reference_field": true,
+            "item_value_jsonpath_list": [
+              ".characteristicType"
+            ],
+            "item_value_match_constraint": {
+              "type": "cv-term-enum",
+              "allowed_cv_terms": [
+                {
+                  "cv_label": "NCIT",
+                  "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C103199",
+                  "name": "Organism Part"
+                }
+              ]
+            },
+            "min_match": 1
+          }
+        }
+      ]
+    },
+    "$.studies[0].materials.sources[*].characteristics[*]": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000350",
+          "description": "Term must be a valid ontology term",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term",
+            "json_path": "value",
+            "allow_user_defined_terms": true
+          }
+        },
+        {
+          "code": "M-000360",
+          "description": "'organism' characteristic value must be from NCBITaxon, ENVO or CHEBI",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "allowed-cv-list",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "json_path": "characteristicType",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "NCIT",
+                        "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C14250",
+                        "name": "Organism"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "allow_user_defined_terms": false,
+            "allowed_cv_list": [
+              "NCBITAXON",
+              "ENVO",
+              "CHEBI"
+            ]
+          }
+        },
+        {
+          "code": "M-000361",
+          "description": "'organism part' characteristic value must be from BTO, UBERON, CHEBI",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "allowed-cv-list",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "json_path": "characteristicType",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "NCIT",
+                        "cv_accession": "http://purl.obolibrary.org/obo/NCIT_C103199",
+                        "name": "Organism Part"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "allow_user_defined_terms": false,
+            "allowed_cv_list": [
+              "BTO",
+              "UBERON",
+              "NCIT",
+              "CHEBI"
+            ]
+          }
+        },
+        {
+          "code": "M-000362",
+          "description": "'disease' characteristic value must be from MONDO, MP, SNOMED",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "allowed-cv-list",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "json_path": "characteristicType",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "",
+                        "cv_accession": "",
+                        "name": "disease"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "allow_user_defined_terms": false,
+            "allowed_cv_list": [
+              "MONDO",
+              "MP",
+              "SNOMED"
+            ]
+          }
+        },
+        {
+          "code": "M-000363",
+          "description": "'cell type' characteristic value must be from CL or CLO",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "allowed-cv-list",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "json_path": "characteristicType",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "EFO",
+                        "cv_accession": "http://www.ebi.ac.uk/efo/EFO_0000324",
+                        "name": "cell type"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "allow_user_defined_terms": false,
+            "allowed_cv_list": [
+              "CL",
+              "CLO"
+            ]
+          }
+        }
+      ]
+    },
+    "$.studies[0].assays[*]": {
+      "code": "M-000320",
+      "description": "sources and samples are required in study",
+      "enforcement_level": "required",
+      "required_properties": [
+        "measurementType",
+        "technologyType",
+        "filename",
+        "materials",
+        "dataFiles"
+      ]
+    },
+    "$.studies[0].protocols": {
+      "code": "M-000400",
+      "description": "At least one protocol MUST be defined in ISA-JSON file",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 1
+      }
+    },
+    "$.studies[0].protocols[*]": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000401",
+          "description": "Name, description and protocol type are required",
+          "enforcement_level": "required",
+          "required_properties": [
+            "name",
+            "description",
+            "protocolType"
+          ]
+        },
+        {
+          "code": "M-000402",
+          "description": "Mass spectrometry protocol MUST have a parameter type 'Instrument'",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "items-count",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "protocolType",
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "CHMO",
+                        "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0000470",
+                        "name": "mass spectrometry"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "item_value_jsonpath_list": [
+              ".parameters[*]"
+            ],
+            "item_value_match_constraint": {
+              "type": "string-enum",
+              "json_path": "parameterName.annotationValue",
+              "options": [
+                "Instrument"
+              ]
+            },
+            "min_match": 1,
+            "max_match": 1
+          }
+        },
+        {
+          "code": "M-000403",
+          "description": "Mass spectrometry protocol MUST have a parameter type 'Scan polarity'",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "items-count",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "protocolType",
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "CHMO",
+                        "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0000470",
+                        "name": "mass spectrometry"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "item_value_jsonpath_list": [
+              ".parameters[*]"
+            ],
+            "item_value_match_constraint": {
+              "type": "string-enum",
+              "json_path": "parameterName.annotationValue",
+              "options": [
+                "Scan polarity"
+              ]
+            },
+            "min_match": 1,
+            "max_match": 1
+          }
+        },
+        {
+          "code": "M-000404",
+          "description": "Mass spectrometry protocol MUST have a parameter type 'Scan m/z range'",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "items-count",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "protocolType",
+                  "constraint": {
+                    "type": "cv-term-enum",
+                    "allowed_cv_terms": [
+                      {
+                        "cv_label": "CHMO",
+                        "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0000470",
+                        "name": "mass spectrometry"
+                      }
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "item_value_jsonpath_list": [
+              ".parameters[*]"
+            ],
+            "item_value_match_constraint": {
+              "type": "string-enum",
+              "json_path": "parameterName.annotationValue",
+              "options": [
+                "Scan m/z range"
+              ]
+            },
+            "min_match": 1,
+            "max_match": 1
+          }
+        }
+      ]
+    },
+    "$.studies[0].protocols[*].name": {
+      "code": "M-000452",
+      "description": "Protocol name MUST be equal or greater than 2 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "minimum": 2
+      }
+    },
+    "$.studies[0].protocols[*].description": {
+      "code": "M-000453",
+      "description": "Protocol description MUST be equal or greater than 40 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "minimum": 40
+      }
+    },
+    "$.studies[0].protocols[*].protocolType": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000454",
+          "description": "Protocol type value MUST be defined.",
+          "enforcement_level": "required",
+          "required_properties": [
+            "annotationValue"
+          ]
+        },
+        {
+          "code": "M-000453",
+          "description": "Protocol type is not in the defined list: '[EFO, http://www.ebi.ac.uk/efo/EFO_0005518, sample collection protocol, ], [MS, http://purl.obolibrary.org/obo/MS_1000831, sample preparation, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000470, mass spectrometry, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0001000, chromatography, ], [OBI, http://purl.obolibrary.org/obo/OBI_0200000, data transformation, ], [EDAM, http://edamontology.org/operation_4074, Compound identification, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000591, nuclear magnetic resonance spectroscopy, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0002927, NMR sample preparation, ]'",
+          "enforcement_level": "recommended",
+          "value_constraint": {
+            "type": "cv-term-enum",
+            "allowed_cv_terms": [
+              {
+                "cv_label": "EFO",
+                "cv_accession": "http://www.ebi.ac.uk/efo/EFO_0005518",
+                "name": "sample collection protocol"
+              },
+              {
+                "cv_label": "MS",
+                "cv_accession": "http://purl.obolibrary.org/obo/MS_1000831",
+                "name": "sample preparation"
+              },
+              {
+                "cv_label": "CHMO",
+                "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0000470",
+                "name": "mass spectrometry"
+              },
+              {
+                "cv_label": "CHMO",
+                "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0001000",
+                "name": "chromatography"
+              },
+              {
+                "cv_label": "OBI",
+                "cv_accession": "http://purl.obolibrary.org/obo/OBI_0200000",
+                "name": "data transformation"
+              },
+              {
+                "cv_label": "EDAM",
+                "cv_accession": "http://edamontology.org/operation_4074",
+                "name": "Compound identification"
+              },
+              {
+                "cv_label": "CHMO",
+                "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0000591",
+                "name": "nuclear magnetic resonance spectroscopy"
+              },
+              {
+                "cv_label": "CHMO",
+                "cv_accession": "http://purl.obolibrary.org/obo/CHMO_0002927",
+                "name": "NMR sample preparation"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "$.studies[0].protocols[*].protocolType.annotationValue": {
+      "code": "M-000455",
+      "description": "Protocol type value MUST be equal or greater than 2 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "minimum": 2
+      }
+    },
+    "$.studies[0].assays[*].technologyType": {
+      "code": "M-000500",
+      "description": "Assay technology type is not in the defined list: '[OBI, http://purl.obolibrary.org/obo/OBI_0000470, mass spectrometry assay, ], [OBI, http://purl.obolibrary.org/obo/OBI_0000623, NMR spectroscopy assay, ]'",
+      "enforcement_level": "recommended",
+      "value_constraint": {
+        "type": "cv-term-enum",
+        "allowed_cv_terms": [
+          {
+            "cv_label": "OBI",
+            "cv_accession": "http://purl.obolibrary.org/obo/OBI_0000470",
+            "name": "mass spectrometry assay"
+          },
+          {
+            "cv_label": "OBI",
+            "cv_accession": "http://purl.obolibrary.org/obo/OBI_0000623",
+            "name": "NMR spectroscopy assay"
+          }
+        ]
+      }
+    },
+    "$.studies[0].assays[*].measurementType": {
+      "code": "M-000501",
+      "description": "Assay technology type is not in the defined list: '[MS, http://purl.obolibrary.org/obo/MS_1003904, untargeted analysis, ], [MS, http://purl.obolibrary.org/obo/MS_1003905, targeted analysis, ], [MS, http://purl.obolibrary.org/obo/MS_1003906, semi-targeted analysis, ]'",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "cv-term-enum",
+        "allowed_cv_terms": [
+          {
+            "cv_label": "MS",
+            "cv_accession": "http://purl.obolibrary.org/obo/MS_1003904",
+            "name": "untargeted analysis"
+          },
+          {
+            "cv_label": "MS",
+            "cv_accession": "http://purl.obolibrary.org/obo/MS_1003905",
+            "name": "targeted analysis"
+          },
+          {
+            "cv_label": "MS",
+            "cv_accession": "http://purl.obolibrary.org/obo/MS_1003906",
+            "name": "semi-targeted analysis"
+          }
+        ]
+      }
+    },
+    "$.studies[0].assays[*].processSequence[*].parameterValues[*]": {
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "M-000502",
+          "description": "Instrument parameter value MUST be child of [MS, http://purl.obolibrary.org/obo/MS_1000031, instrument model]",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "parent-cv-term",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "string-enum",
+                    "json_path": "parameterName.annotationValue",
+                    "options": [
+                      "Instrument"
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "parent_cv_terms": [
+              {
+                "cv_label": "MS",
+                "cv_accession": "http://purl.obolibrary.org/obo/MS_1000031",
+                "name": "instrument model"
+              }
+            ]
+          }
+        },
+        {
+          "code": "M-000503",
+          "description": "Instrument parameter value MUST be child of [MS, http://purl.obolibrary.org/obo/MS_1003776, acquisition polarity]",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "parent-cv-term",
+            "precondition": {
+              "evaluations": [
+                {
+                  "json_path": "category[\"@id\"]",
+                  "is_reference_field": true,
+                  "constraint": {
+                    "type": "string-enum",
+                    "json_path": "parameterName.annotationValue",
+                    "options": [
+                      "Scan polarity"
+                    ]
+                  },
+                  "join_operator": "and"
+                }
+              ],
+              "join_operator": "and"
+            },
+            "json_path": "value",
+            "parent_cv_terms": [
+              {
+                "cv_label": "MS",
+                "cv_accession": "http://purl.obolibrary.org/obo/MS_1003776",
+                "name": "acquisition polarity"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

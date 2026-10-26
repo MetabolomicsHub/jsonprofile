@@ -6,7 +6,7 @@
   "configuration": {
     "wasm_file_definitions": {
       "default": {
-        "wasm_file_path": "tests/resources/default-policies-1.0.0-M.wasm",
+        "wasm_file_path": "tests/resources/mztab-m/default-policies-1.0.0-M.wasm",
         "wasm_file_download_url": "https://github.com/example-profiles/example-profile.wasm",
         "entrypoint": "mztabm/policies"
       }

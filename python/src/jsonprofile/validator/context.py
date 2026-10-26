@@ -120,3 +120,7 @@ class JsonProfileRunContext(BaseProfileContext):
         dict[str, Any],
         Field(description="Custom context data"),
     ] = {}
+    unique_id_objects: Annotated[
+        None | dict[str, dict],
+        Field(description="object id and object mapping"),
+    ] = None

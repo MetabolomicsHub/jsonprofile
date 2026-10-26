@@ -50,7 +50,9 @@ class ConstraintChecker(abc.ABC):
             return f"{constraint.description}. {message.strip()}"
         return message.strip()
 
-    def join_json_path(self, path1: JsonPath, path2: None | JsonPath = None):
+    def join_json_path(
+        self, path1: JsonPath, path2: None | JsonPath = None, value: None | Any = None
+    ):
 
         path1 = path1 or ""
         path2 = path2 or ""
@@ -63,6 +65,8 @@ class ConstraintChecker(abc.ABC):
 
         if path2.startswith("["):
             return f"$.{path1}{path2}" if path1 else f"$.{path2}"
+        if isinstance(value, list):
+            return f"$.{path1}[*].{path2}" if path1 else f"$.{path2}"
         return f"$.{path1}.{path2}" if path1 else f"$.{path2}"
 
     def evaluate_precondition(
@@ -80,7 +84,7 @@ class ConstraintChecker(abc.ABC):
         for evaluation in constraint.precondition.evaluations:
             json_path = evaluation.json_path or "$"
 
-            json_path = self.join_json_path(json_path)
+            json_path = self.join_json_path(json_path, None, value)
             json_input = root if evaluation.root_value_evaluation else value
             checker = context.profile_validator_factory.get_checker(
                 evaluation.constraint
@@ -100,7 +104,12 @@ class ConstraintChecker(abc.ABC):
             if runtime_config and runtime_config.skip_decimal_validations:
                 if isinstance(constraint, DecimalConstraint):
                     skip = True
-
+            if evaluation.is_reference_field:
+                if context and context.unique_id_objects:
+                    if isinstance(matches, list):
+                        matches = [context.unique_id_objects.get(x) for x in matches]
+                    else:
+                        matches = context.unique_id_objects.get(matches)
             if not skip:
                 res = checker.validate_constraint(
                     evaluation.constraint, matches, root=root, context=context
@@ -230,4 +239,10 @@ class ConstraintChecker(abc.ABC):
                 sub_input_value = sub_input_value[0]
             elif len(sub_input_value) == 0:
                 sub_input_value = None
+        if constraint.is_reference_field:
+            if context and context.unique_id_objects:
+                if isinstance(sub_input_value, list):
+                    return [context.unique_id_objects.get(x) for x in sub_input_value]
+                else:
+                    return context.unique_id_objects.get(sub_input_value)
         return sub_input_value
