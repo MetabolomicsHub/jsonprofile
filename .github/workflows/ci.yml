@@ -63,7 +63,7 @@ jobs:
       if: steps.cz.outputs.version != steps.cz.outputs.previous_version
       env:
         UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
-      run: uv publish .cache/python/dist/*
+      run: uv publish
 
   java:
     name: Java
