@@ -8,7 +8,6 @@ test: test-python test-java
 
 lint:
     uv --project python run pre-commit run --all-files
-    cd python && uv run ruff check src tests
 
 build: build-python build-java
 
