@@ -1,0 +1,681 @@
+{
+    "repository_revision": 15,
+    "repository_revision_comment": "new mhd update",
+    "repository_revision_datetime": "2026-10-02T11:17:28.511910",
+    "change_log": [
+        {
+            "revision": 15,
+            "revision_datetime": "2026-10-02T11:17:28.511910",
+            "comment": "new mhd update"
+        },
+        {
+            "revision": 14,
+            "revision_datetime": "2026-09-24T21:31:12.929636",
+            "comment": "rev update"
+        },
+        {
+            "revision": 13,
+            "revision_datetime": "2026-09-24T21:28:33.266802",
+            "comment": "Dataset license update"
+        },
+        {
+            "revision": 12,
+            "revision_datetime": "2026-09-23T13:44:59.744043",
+            "comment": "test"
+        },
+        {
+            "revision": 11,
+            "revision_datetime": "2026-09-22T09:58:03.979023",
+            "comment": "New Revision Test"
+        },
+        {
+            "revision": 10,
+            "revision_datetime": "2026-09-22T09:00:17.930170",
+            "comment": "Test revision"
+        },
+        {
+            "revision": 9,
+            "revision_datetime": "2026-09-20T10:53:05.985101",
+            "comment": "Rev"
+        },
+        {
+            "revision": 8,
+            "revision_datetime": "2026-09-20T09:10:09.206380",
+            "comment": "xyz"
+        },
+        {
+            "revision": 7,
+            "revision_datetime": "2026-09-19T23:43:41.445896",
+            "comment": "rev3"
+        },
+        {
+            "revision": 6,
+            "revision_datetime": "2026-09-19T23:30:00.521105",
+            "comment": "v44"
+        },
+        {
+            "revision": 5,
+            "revision_datetime": "2026-09-19T22:45:39.058696",
+            "comment": "test"
+        },
+        {
+            "revision": 4,
+            "revision_datetime": "2026-09-19T21:36:53.669814",
+            "comment": "new publication"
+        },
+        {
+            "revision": 3,
+            "revision_datetime": "2026-09-19T20:51:06.832078",
+            "comment": "uploaded"
+        },
+        {
+            "revision": 2,
+            "revision_datetime": "2026-09-19T19:11:45.183698",
+            "comment": "revision"
+        },
+        {
+            "revision": 1,
+            "revision_datetime": "2026-09-19T17:45:53.724376",
+            "comment": "Initial revision"
+        }
+    ],
+    "$schema": "https://metabolomicshub.github.io/mhd-model/schemas/v1_0/announcement-v1.0.schema.json",
+    "profile_uri": "https://metabolomicshub.github.io/mhd-model/schemas/v1_0/announcement-v1.0.schema.ms-profile.json",
+    "created_at": "2026-10-02T11:47:45.989957Z",
+    "id": "dataset:announcement-ms-v1-0:39cd3906-dbf1-512f-a041-1848b1661cef",
+    "type": "announcement-ms-v1-0",
+    "url_list": [
+        "https://www.ebi.ac.uk/metabolights/MTBLS30009012",
+        "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012",
+        "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012"
+    ],
+    "uri": "urn:mhd::mhdt000027:dataset:announcement-ms-v1-0",
+    "repository_identifier": "MTBLS30009012",
+    "alternative_id_list": [
+        "dataset:announcement-ms-v1-0:c83d153a-30f3-58b7-be12-cd74dda8a1ef"
+    ],
+    "repository_name": "MetaboLights",
+    "repository_short_name": "MTBLS",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "license_name": "CC BY 4.0",
+    "name": "New Revision of My Test: Enterotoxigenic Bacteroides fragilis exacerbates alcoholic liver disease progression through kynurenine mediated AMPK signaling inhibition and retinoic acid depletion",
+    "description": "<p>Abstract Background &amp; Aims: Alcoholic liver disease (ALD) pathogenesis involves gut microbiota dysbiosis, but specific pathobionts and mechanisms remain unclear. This study investigated the role of patient-derived enterotoxigenic Bacteroides fragilis (ETBF) in ALD progression and its underlying molecular mechanisms. Methods: We recruited 25 healthy controls (HC) and 49 ALD patients. Fecal and serum samples underwent metagenomic and metabolomic analyses. Mechanistic validation employed fecal microbiota transplantation (FMT), ETBF monocolonization, and metabolite interventions in ethanol-fed mice, complemented by in vitro studies. Results:ALD patients exhibited dysbiosis characterized by marked ETBF enrichment and depletion of SCFA-producing bacteria (Faecalibacterium prausnitzii, Fusicatenibacter saccharivorans). Fecal SCFAs were significantly decreased and inversely correlated with liver injury markers. Serum metabolomics identified 128 dysregulated metabolites, including elevated pro-inflammatory 9,10-DHOME and decreased hepatoprotective lysophosphatidylcholines. Metagenomic and metabolomic data achieved high diagnostic accuracy and predicted disease progression (AUC=0.89). FMT from ALC patients or ETBF monocolonization exacerbated alcohol-induced liver injury, steatosis, inflammation, and fibrosis in mice. Mechanistically, ETBF upregulated hepatic and colon IDO1 via inflammatory cytokines TNF-α, increasing stool and hepatic kynurenine levels. Kynurenine exerted dual hepatotoxic effects: (1) inhibiting AMPK phosphorylation in hepatocytes, promoting lipid accumulation; and (2) inducing CYP26A1, accelerating retinoic acid (RA) catabolism. RA deficiency derepressed PPARγ transcription, activating hepatic stellate cells and driving fibrogenesis. Exogenous kynurenine recapitulated these effects, while RA supplementation attenuated Lipid formation and fibrogenic in ALD mice. Exogenous Anti-TNF-α or Talarozole alleviates ETBF-induced Lipid formation and fibrogenic in ALD mice. Conclusions: ETBF is associated with ALD progression through IDO1/kynurenine/CYP26A1/RA/PPARγ cascade, representing a novel pathogenic mechanism and offering multiple therapeutic targets.</p>",
+    "cv_definitions": [
+        {
+            "label": "BTO",
+            "name": "The BRENDA Tissue Ontology (BTO)",
+            "uri": "http://purl.obolibrary.org/obo/bto.owl",
+            "prefix": "http://purl.obolibrary.org/obo/BTO_",
+            "version": ""
+        },
+        {
+            "label": "CHMO",
+            "name": "Chemical Methods Ontology",
+            "uri": "http://purl.obolibrary.org/obo/chmo.owl",
+            "prefix": "http://purl.obolibrary.org/obo/CHMO_",
+            "version": "2026-05-28"
+        },
+        {
+            "label": "CL",
+            "name": "Chemical Entities of Biological Interest",
+            "uri": "http://purl.obolibrary.org/obo/cl.owl",
+            "prefix": "http://purl.obolibrary.org/obo/CL_",
+            "version": ""
+        },
+        {
+            "label": "EDAM",
+            "name": "The ontology of data analysis and management",
+            "uri": "http://edamontology.org",
+            "prefix": "http://edamontology.org/"
+        },
+        {
+            "label": "EFO",
+            "name": "Experimental Factor Ontology",
+            "uri": "http://www.ebi.ac.uk/efo/efo.owl",
+            "prefix": "http://www.ebi.ac.uk/efo/EFO_"
+        },
+        {
+            "label": "GAZ",
+            "name": "Gazetteer",
+            "uri": "http://purl.obolibrary.org/obo/gaz.owl",
+            "prefix": "GAZ"
+        },
+        {
+            "label": "MI",
+            "name": "Molecular Interactions Controlled Vocabulary",
+            "uri": "http://purl.obolibrary.org/obo/mi.owl",
+            "prefix": "http://purl.obolibrary.org/obo/MI_",
+            "version": ""
+        },
+        {
+            "label": "MONDO",
+            "name": "Mondo Disease Ontology",
+            "uri": "http://purl.obolibrary.org/obo/mondo/mondo-international.owl",
+            "prefix": "http://purl.obolibrary.org/obo/MONDO_",
+            "version": "2026-09-01"
+        },
+        {
+            "label": "MS",
+            "name": "Mass spectrometry ontology",
+            "uri": "http://purl.obolibrary.org/obo/ms.owl",
+            "prefix": "http://purl.obolibrary.org/obo/MS_",
+            "version": ""
+        },
+        {
+            "label": "MSIO",
+            "name": "Metabolomics Standards Initiative Ontology (MSIO)",
+            "uri": "http://purl.obolibrary.org/obo/msio.owl",
+            "prefix": "http://purl.obolibrary.org/obo/MSIO_"
+        },
+        {
+            "label": "NCBITAXON",
+            "name": "National Center for Biotechnology Information (NCBI) Organismal Classification",
+            "uri": "http://purl.obolibrary.org/obo/ncbitaxon.owl",
+            "prefix": "http://purl.obolibrary.org/obo/NCBITaxon_"
+        },
+        {
+            "label": "NCIT",
+            "name": "NCI Thesaurus OBO Edition",
+            "uri": "http://purl.obolibrary.org/obo/ncit.owl",
+            "prefix": "http://purl.obolibrary.org/obo/NCIT_",
+            "version": "26.02d"
+        },
+        {
+            "label": "OBI",
+            "name": "Ontology for Biomedical Investigations",
+            "uri": "http://purl.obolibrary.org/obo/obi.owl",
+            "prefix": "http://purl.obolibrary.org/obo/OBI_",
+            "version": "2026-07-27"
+        },
+        {
+            "label": "SNOMED",
+            "name": "SNOMED CT (International Edition)",
+            "uri": "http://snomed.info/sct/9000000000002070081231",
+            "prefix": "http://snomed.info/id/"
+        }
+    ],
+    "mhd_identifier": "MHDT000027",
+    "mhd_metadata_file_url": "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/MTBLS30009012.mhd.json",
+    "mhd_metadata_file_hashes": [
+        {
+            "value": "e1552e5d81357799f5800baab9dafce968f012ac6327eaa002ec9dba063c0ff8",
+            "source": "MS",
+            "accession": "MS:1003151",
+            "name": "SHA-256"
+        },
+        {
+            "value": "c131711260c14cf6b5a259f701b3c5f4",
+            "source": "MS",
+            "accession": "MS:1000568",
+            "name": "MD5"
+        }
+    ],
+    "submission_date": "2026-09-19T00:00:00",
+    "public_release_date": "2026-09-19T00:00:00",
+    "submitters": [
+        {
+            "full_name": "Ozgur Yurekten",
+            "email_list": [
+                "ozgury@ebi.ac.uk"
+            ]
+        }
+    ],
+    "principal_investigators": [
+        {
+            "full_name": "Ozgur Yurekten",
+            "email_list": [
+                "ozgury@ebi.ac.uk"
+            ]
+        }
+    ],
+    "omics_type": [
+        {
+            "source": "EDAM",
+            "accession": "EDAM:topic_3172",
+            "name": "Metabolomics"
+        }
+    ],
+    "technology_type": [
+        {
+            "source": "OBI",
+            "accession": "OBI:0000470",
+            "name": "mass spectrometry assay"
+        }
+    ],
+    "measurement_type": [
+        {
+            "source": "MS",
+            "accession": "MS:1003904",
+            "name": "untargeted analysis"
+        }
+    ],
+    "assay_type": [
+        {
+            "source": "OBI",
+            "accession": "OBI:0003097",
+            "name": "liquid chromatography mass spectrometry assay"
+        }
+    ],
+    "submitter_keywords": [
+        {
+            "source": "MSIO",
+            "accession": "MSIO:0000100",
+            "name": "targeted metabolite profiling"
+        },
+        {
+            "source": "MONDO",
+            "accession": "MONDO:0043693",
+            "name": "alcoholic liver disease"
+        },
+        {
+            "source": "",
+            "accession": "",
+            "name": "AMPK signaling inhibition"
+        },
+        {
+            "source": "MS",
+            "accession": "MS:1002205",
+            "name": "ProteoWizard msconvert"
+        }
+    ],
+    "descriptors": [
+        {
+            "source": "NCBITAXON",
+            "accession": "NCBITaxon:9606",
+            "name": "Homo sapiens"
+        },
+        {
+            "source": "MONDO",
+            "accession": "MONDO:0005575",
+            "name": "colorectal cancer"
+        },
+        {
+            "source": "MS",
+            "accession": "MS:1003554",
+            "name": "ThermoQuest Voyager"
+        },
+        {
+            "source": "NCIT",
+            "accession": "NCIT:C16269",
+            "name": "Aging"
+        },
+        {
+            "source": "EDAM",
+            "accession": "EDAM:topic_3172",
+            "name": "Metabolomics"
+        },
+        {
+            "source": "CL",
+            "accession": "CL:0000815",
+            "name": "regulatory T cell"
+        },
+        {
+            "source": "BTO",
+            "accession": "BTO:0001419",
+            "name": "urine"
+        },
+        {
+            "source": "CHMO",
+            "accession": "CHMO:0002746",
+            "name": "experimental sample"
+        },
+        {
+            "source": "MS",
+            "accession": "MS:1003904",
+            "name": "untargeted analysis"
+        },
+        {
+            "source": "",
+            "accession": "",
+            "name": "Agilent 1100 Series HPLC System"
+        }
+    ],
+    "publications": {
+        "source": "MS",
+        "accession": "MS:1002858",
+        "name": "Dataset with its publication pending"
+    },
+    "study_factors": [
+        {
+            "key": {
+                "source": "",
+                "accession": "",
+                "name": "dose"
+            },
+            "values": [
+                {
+                    "source": "SNOMED",
+                    "accession": "SNOMED:90391002",
+                    "name": "Blast"
+                },
+                {
+                    "source": "GAZ",
+                    "accession": "GAZ:00239979",
+                    "name": "West Coast"
+                }
+            ]
+        }
+    ],
+    "characteristic_values": [
+        {
+            "key": {
+                "source": "EFO",
+                "accession": "EFO:0000324",
+                "name": "cell type"
+            },
+            "values": [
+                {
+                    "source": "CL",
+                    "accession": "CL:0000815",
+                    "name": "regulatory T cell"
+                }
+            ]
+        },
+        {
+            "key": {
+                "source": "MONDO",
+                "accession": "MONDO:0000001",
+                "name": "disease"
+            },
+            "values": [
+                {
+                    "source": "MONDO",
+                    "accession": "MONDO:0005575",
+                    "name": "colorectal cancer"
+                }
+            ]
+        },
+        {
+            "key": {
+                "source": "NCIT",
+                "accession": "NCIT:C14250",
+                "name": "Organism"
+            },
+            "values": [
+                {
+                    "source": "NCBITAXON",
+                    "accession": "NCBITaxon:9606",
+                    "name": "Homo sapiens"
+                },
+                {
+                    "source": "CHEBI",
+                    "accession": "CHEBI:15377",
+                    "name": "water"
+                },
+                {
+                    "source": "BTO",
+                    "accession": "BTO:0001419",
+                    "name": "urine"
+                }
+            ]
+        },
+        {
+            "key": {
+                "source": "NCIT",
+                "accession": "NCIT:C103199",
+                "name": "Organism Part"
+            },
+            "values": [
+                {
+                    "source": "BTO",
+                    "accession": "BTO:0001419",
+                    "name": "urine"
+                }
+            ]
+        },
+        {
+            "key": {
+                "source": "NCIT",
+                "accession": "NCIT:C210102",
+                "name": "Sample Type"
+            },
+            "values": [
+                {
+                    "source": "CHMO",
+                    "accession": "CHMO:0002746",
+                    "name": "experimental sample"
+                }
+            ]
+        }
+    ],
+    "protocols": [
+        {
+            "name": "Chromatography",
+            "protocol_type": {
+                "source": "CHMO",
+                "accession": "CHMO:0001000",
+                "name": "chromatography"
+            },
+            "description": "<p>I don't care what the column did or how it works. I learn new, basic things about these experiments all the time. The polarity affects the mass to charge? Cool! I was clueless!</p>",
+            "protocol_parameters": [
+                {
+                    "key": {
+                        "source": "OBI",
+                        "accession": "OBI:0000038",
+                        "name": "chromatography column"
+                    },
+                    "values": [
+                        {
+                            "source": "",
+                            "accession": "",
+                            "name": "Acclaim 120 C18 (2.2 µm, 2.1 mm x 150 mm; Thermo Scientific)"
+                        }
+                    ]
+                },
+                {
+                    "key": {
+                        "source": "OBI",
+                        "accession": "OBI:0000485",
+                        "name": "chromatography instrument"
+                    },
+                    "values": [
+                        {
+                            "source": "MS",
+                            "accession": "MS:1003618",
+                            "name": "1100 Series"
+                        }
+                    ]
+                },
+                {
+                    "key": {
+                        "source": "MS",
+                        "accession": "MS:1002270",
+                        "name": "chromatography separation"
+                    },
+                    "values": [
+                        {
+                            "source": "MS",
+                            "accession": "MS:1003582",
+                            "name": "reversed phase chromatography"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Data transformation",
+            "protocol_type": {
+                "source": "OBI",
+                "accession": "OBI:0200000",
+                "name": "data transformation"
+            },
+            "description": "<p>forty characters is a lot when you've lost the will to do anything at all heeheehahah</p>"
+        },
+        {
+            "name": "Extraction",
+            "protocol_type": {
+                "source": "MS",
+                "accession": "MS:1000831",
+                "name": "sample preparation"
+            },
+            "description": "<p>I think this sort of mindless editor testing could well be automated. And why shouldn't it be? It is utterly preposterous that this manual effort, which was solved in amount of passed time describable in decades, should be replicated by each of the developers.</p>"
+        },
+        {
+            "name": "Mass spectrometry",
+            "protocol_type": {
+                "source": "CHMO",
+                "accession": "CHMO:0000470",
+                "name": "mass spectrometry"
+            },
+            "description": "<p>you update the protocol description because I am SICK of it</p>",
+            "protocol_parameters": [
+                {
+                    "key": {
+                        "source": "MS",
+                        "accession": "MS:1003776",
+                        "name": "acquisition polarity"
+                    },
+                    "values": [
+                        {
+                            "source": "MS",
+                            "accession": "MS:1000076",
+                            "name": "negative polarity acquisition"
+                        }
+                    ]
+                },
+                {
+                    "key": {
+                        "source": "OBI",
+                        "accession": "OBI:0000049",
+                        "name": "mass spectrometer"
+                    },
+                    "values": [
+                        {
+                            "source": "MS",
+                            "accession": "MS:1003554",
+                            "name": "ThermoQuest Voyager"
+                        }
+                    ]
+                },
+                {
+                    "key": {
+                        "source": "",
+                        "accession": "",
+                        "name": "scan m/z range"
+                    },
+                    "values": [
+                        {
+                            "source": "",
+                            "accession": "",
+                            "name": "100-1000"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Metabolite identification",
+            "protocol_type": {
+                "source": "MI",
+                "accession": "MI:2131",
+                "name": "metabolite identification"
+            },
+            "description": "<p>We only found two metabolites, a stinking shame. </p>"
+        },
+        {
+            "name": "Sample collection",
+            "protocol_type": {
+                "source": "EFO",
+                "accession": "EFO:0005518",
+                "name": "sample collection protocol"
+            },
+            "description": "<p>People serum samples was maintained at -80°C until further testing.</p>"
+        }
+    ],
+    "reported_molecular_entities": [
+        {
+            "name": "caffeine",
+            "database_identifiers": [
+                {
+                    "value": "CHEBI:27732",
+                    "source": "EDAM",
+                    "accession": "EDAM:data_1174",
+                    "name": "ChEBI ID"
+                }
+            ]
+        },
+        {
+            "name": "water",
+            "database_identifiers": [
+                {
+                    "value": "CHEBI:15377",
+                    "source": "EDAM",
+                    "accession": "EDAM:data_1174",
+                    "name": "ChEBI ID"
+                }
+            ]
+        }
+    ],
+    "repository_metadata_file_list": [
+        {
+            "name": "a_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography.txt",
+            "url_list": [
+                "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/a_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography.txt",
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/a_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography.txt"
+            ],
+            "extension": ".txt",
+            "format": {
+                "source": "EDAM",
+                "accession": "EDAM:format_4068",
+                "name": "ISA-Tab Assay file"
+            }
+        },
+        {
+            "name": "i_Investigation.txt",
+            "url_list": [
+                "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/i_Investigation.txt",
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/i_Investigation.txt"
+            ],
+            "extension": ".txt",
+            "format": {
+                "source": "EDAM",
+                "accession": "EDAM:format_4066",
+                "name": "ISA-Tab Investigation file"
+            }
+        },
+        {
+            "name": "s_MTBLS30009012.txt",
+            "url_list": [
+                "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/s_MTBLS30009012.txt",
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/s_MTBLS30009012.txt"
+            ],
+            "extension": ".txt",
+            "format": {
+                "source": "EDAM",
+                "accession": "EDAM:format_4067",
+                "name": "ISA-Tab Study file"
+            }
+        }
+    ],
+    "raw_data_file_list": [
+        {
+            "name": "FILES/DY02.zip",
+            "url_list": [
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/FILES/DY02.zip"
+            ],
+            "extension": ".zip"
+        },
+        {
+            "name": "FILES/DY04.zip",
+            "url_list": [
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/FILES/DY04.zip"
+            ],
+            "extension": ".zip"
+        }
+    ],
+    "result_file_list": [
+        {
+            "name": "m_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography_v2_maf.tsv",
+            "url_list": [
+                "ftp://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/m_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography_v2_maf.tsv",
+                "http://ftp.ebi.ac.uk/pub/databases/metabolights/studies/.test/MTBLS30009012/m_MTBLS30009012_LC-MS_negative_hydrophilic-interaction-liquid-chromatography_v2_maf.tsv"
+            ],
+            "extension": ".tsv",
+            "format": {
+                "source": "EDAM",
+                "accession": "EDAM:format_4073",
+                "name": "MetaboLights MAF"
+            }
+        }
+    ]
+}

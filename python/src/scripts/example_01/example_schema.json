@@ -1,0 +1,1822 @@
+{
+  "$defs": {
+    "AnnouncementContact": {
+      "description": "A contact person associated with the dataset.\nThis can be a submitter, author, or a principal investigator.",
+      "properties": {
+        "full_name": {
+          "anyOf": [
+            {
+              "minLength": 5,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full name of the contact person.",
+          "title": "Full Name"
+        },
+        "email_list": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of contact email addresses.",
+          "title": "Email List"
+        },
+        "orcid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ORCID digital identifier of the contact person.",
+          "title": "ORCID"
+        },
+        "affiliation_list": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of institutional affiliations for the contact.",
+          "title": "Affiliation List"
+        }
+      },
+      "title": "AnnouncementContact",
+      "type": "object"
+    },
+    "AnnouncementDerivedDataFile": {
+      "description": "Derived or processed data file generated from raw data analysis.",
+      "properties": {
+        "name": {
+          "description": "Name of the file including extension.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url_list": {
+          "description": "List of direct download or access URLs for the file.",
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Url List",
+          "type": "array"
+        },
+        "compression_formats": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTerm"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of compression format CV terms applied to the file (e.g. gzip, zip).",
+          "title": "Compression Formats"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File extension string (e.g., .mzML, .raw, .txt).",
+          "title": "Extension"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the derived data file as a CV term.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "url_list"
+      ],
+      "title": "AnnouncementDerivedDataFile",
+      "type": "object"
+    },
+    "AnnouncementMetadataFile": {
+      "description": "Metadata file (e.g., SDRF, ISA-Tab) associated with the dataset announcement.",
+      "properties": {
+        "name": {
+          "description": "Name of the file including extension.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url_list": {
+          "description": "List of direct download or access URLs for the file.",
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Url List",
+          "type": "array"
+        },
+        "compression_formats": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTerm"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of compression format CV terms applied to the file (e.g. gzip, zip).",
+          "title": "Compression Formats"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File extension string (e.g., .mzML, .raw, .txt).",
+          "title": "Extension"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the metadata file as a CV term.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "url_list"
+      ],
+      "title": "AnnouncementMetadataFile",
+      "type": "object"
+    },
+    "AnnouncementProtocol": {
+      "description": "A protocol is a defined and standardized procedure followed\nto collect, prepare, or analyze biological samples.",
+      "properties": {
+        "name": {
+          "description": "Name or title of the protocol.",
+          "title": "Name",
+          "type": "string"
+        },
+        "protocol_type": {
+          "$ref": "#/$defs/CvTerm",
+          "description": "Type of protocol specified as a Controlled Vocabulary (CV) term.",
+          "title": "Protocol Type"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Detailed description of the experimental protocol.",
+          "title": "Description"
+        },
+        "protocol_parameters": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTermKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of protocol parameters specified as key-value CV pairs.",
+          "title": "Protocol Parameters"
+        },
+        "related_assay_names": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of assay names that utilize this protocol.",
+          "title": "Related Assay Names"
+        }
+      },
+      "required": [
+        "name",
+        "protocol_type"
+      ],
+      "title": "AnnouncementProtocol",
+      "type": "object"
+    },
+    "AnnouncementPublication": {
+      "description": "A publication associated with the dataset.",
+      "properties": {
+        "title": {
+          "description": "Title of the publication.",
+          "minLength": 10,
+          "title": "Title",
+          "type": "string"
+        },
+        "doi": {
+          "description": "Digital Object Identifier (DOI) for the publication.",
+          "title": "Doi",
+          "type": "string"
+        },
+        "pubmed_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PubMed unique identifier (PMID) of the publication.",
+          "title": "Pubmed Id"
+        },
+        "author_list": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of author names for the publication.",
+          "title": "Author List"
+        }
+      },
+      "required": [
+        "title",
+        "doi"
+      ],
+      "title": "AnnouncementPublication",
+      "type": "object"
+    },
+    "AnnouncementRawDataFile": {
+      "description": "Raw experimental data file (e.g., instrument vendor files) associated with the dataset.",
+      "properties": {
+        "name": {
+          "description": "Name of the file including extension.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url_list": {
+          "description": "List of direct download or access URLs for the file.",
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Url List",
+          "type": "array"
+        },
+        "compression_formats": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTerm"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of compression format CV terms applied to the file (e.g. gzip, zip).",
+          "title": "Compression Formats"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File extension string (e.g., .mzML, .raw, .txt).",
+          "title": "Extension"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the raw data file as a CV term.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "url_list"
+      ],
+      "title": "AnnouncementRawDataFile",
+      "type": "object"
+    },
+    "AnnouncementReportedMolecularEntity": {
+      "description": "A molecular entity reported as identified or quantified in the dataset.",
+      "properties": {
+        "name": {
+          "description": "Name or chemical label of the reported molecular entity.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "database_identifiers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTermValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of database identifiers (e.g., ChEBI, RefMet, PubChem) for the molecular entity as CV term values.",
+          "title": "Database Identifiers"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "AnnouncementReportedMolecularEntity",
+      "type": "object"
+    },
+    "AnnouncementResultFile": {
+      "description": "Processed result data file (e.g. identification or quantification results) in the dataset.",
+      "properties": {
+        "name": {
+          "description": "Name of the file including extension.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url_list": {
+          "description": "List of direct download or access URLs for the file.",
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Url List",
+          "type": "array"
+        },
+        "compression_formats": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTerm"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of compression format CV terms applied to the file (e.g. gzip, zip).",
+          "title": "Compression Formats"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File extension string (e.g., .mzML, .raw, .txt).",
+          "title": "Extension"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the result data file as a CV term.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "url_list"
+      ],
+      "title": "AnnouncementResultFile",
+      "type": "object"
+    },
+    "AnnouncementSupplementaryFile": {
+      "description": "Supplementary file (e.g. documentation, protocols, figures) associated with the dataset.",
+      "properties": {
+        "name": {
+          "description": "Name of the file including extension.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url_list": {
+          "description": "List of direct download or access URLs for the file.",
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Url List",
+          "type": "array"
+        },
+        "compression_formats": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CvTerm"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of compression format CV terms applied to the file (e.g. gzip, zip).",
+          "title": "Compression Formats"
+        },
+        "extension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File extension string (e.g., .mzML, .raw, .txt).",
+          "title": "Extension"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the supplementary file as a CV term.",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "name",
+        "url_list"
+      ],
+      "title": "AnnouncementSupplementaryFile",
+      "type": "object"
+    },
+    "BasicValueModel": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "description": "Supported types",
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value",
+          "title": "Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UnitCvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "unit of the value.",
+          "title": "Unit"
+        }
+      },
+      "title": "BasicValueModel",
+      "type": "object"
+    },
+    "CvDefinition": {
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prefix"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "alternative_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alternative Labels"
+        },
+        "alternative_prefixes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alternative Prefixes"
+        }
+      },
+      "title": "CvDefinition",
+      "type": "object"
+    },
+    "CvTerm": {
+      "properties": {
+        "source": {
+          "default": "",
+          "description": "Ontology source name.",
+          "title": "Source",
+          "type": "string"
+        },
+        "accession": {
+          "default": "",
+          "description": "Accession number of CV term in compact URI format.",
+          "title": "Accession",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "description": "Label of CV term.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "CvTerm",
+      "type": "object"
+    },
+    "CvTermKeyValue": {
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/CvTerm",
+          "description": "key CV term of values.",
+          "title": "Key"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "description": "Supported types",
+                    "format": "uri",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "$ref": "#/$defs/BasicValueModel"
+                  },
+                  {
+                    "$ref": "#/$defs/CvTerm"
+                  },
+                  {
+                    "$ref": "#/$defs/CvTermValue"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "CvTermKeyValue",
+      "type": "object"
+    },
+    "CvTermValue": {
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            },
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value of CV term.",
+          "title": "Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UnitCvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unit CV term if value has a unit.",
+          "title": "Unit"
+        },
+        "source": {
+          "default": "",
+          "description": "Ontology source name.",
+          "title": "Source",
+          "type": "string"
+        },
+        "accession": {
+          "default": "",
+          "description": "Accession number of CV term in compact URI format.",
+          "title": "Accession",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "description": "Label of CV term.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "CvTermValue",
+      "type": "object"
+    },
+    "KeyValue": {
+      "properties": {
+        "key": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "pattern": "^domain:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^cv:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^cv-value:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^dataset:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^reference:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^relationship:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                }
+              ],
+              "description": "Node Id"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "pattern": "^domain:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^cv:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^cv-value:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^dataset:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                },
+                {
+                  "pattern": "^reference:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "type": "string"
+                }
+              ],
+              "description": "Node Id"
+            },
+            {
+              "description": "Supported types",
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/CvTerm"
+            },
+            {
+              "$ref": "#/$defs/CvTermValue"
+            },
+            {
+              "$ref": "#/$defs/BasicValueModel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "KeyValue",
+      "type": "object"
+    },
+    "Revision": {
+      "properties": {
+        "revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "revision_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision Datetime"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        }
+      },
+      "title": "Revision",
+      "type": "object"
+    },
+    "UnitCvTerm": {
+      "properties": {
+        "source": {
+          "default": "",
+          "description": "Ontology source name.",
+          "title": "Source",
+          "type": "string"
+        },
+        "accession": {
+          "default": "",
+          "description": "Accession number of CV term in compact URI format.",
+          "title": "Accession",
+          "type": "string"
+        },
+        "name": {
+          "default": "",
+          "description": "Label of CV term.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "title": "UnitCvTerm",
+      "type": "object"
+    }
+  },
+  "description": "Base Profile for dataset announcement files.",
+  "properties": {
+    "revision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision"
+    },
+    "revision_comment": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Comment"
+    },
+    "revision_datetime": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Datetime"
+    },
+    "repository_revision": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Revision"
+    },
+    "repository_revision_comment": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Revision Comment"
+    },
+    "repository_revision_datetime": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Repository Revision Datetime"
+    },
+    "change_log": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Revision"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Revision",
+      "title": "Change Log"
+    },
+    "$schema": {
+      "description": "Schema name of the file",
+      "title": "Schema Name",
+      "type": "string"
+    },
+    "profile_uri": {
+      "description": "Validation Profiles",
+      "title": "Profile Uri",
+      "type": "string"
+    },
+    "created_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Created at",
+      "title": "Created At"
+    },
+    "prefix": {
+      "default": "dataset",
+      "description": "prefix of the id",
+      "title": "Prefix",
+      "type": "string"
+    },
+    "id": {
+      "anyOf": [
+        {
+          "anyOf": [
+            {
+              "pattern": "^domain:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^cv:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^cv-value:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^dataset:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^reference:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "pattern": "^relationship:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            }
+          ],
+          "description": "Node Id"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Unique identifier of an MHD entity",
+      "title": "Id"
+    },
+    "type": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z][-_a-z0-9]*[a-z0-9]$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": "announcement-base-v1-0",
+      "description": "The type property identifies type of the file",
+      "title": "Type"
+    },
+    "label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Label"
+    },
+    "created_by_ref": {
+      "anyOf": [
+        {
+          "pattern": "^cv-value:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The id property of the data-provider who created the object.",
+      "title": "Created By Ref"
+    },
+    "tag_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Key-value descriptors related to the object.",
+      "title": "Tag List"
+    },
+    "external_reference_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/KeyValue"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "External references related to the object.",
+      "title": "External Reference List"
+    },
+    "url_list": {
+      "anyOf": [
+        {
+          "items": {
+            "format": "uri",
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of web page or repository URLs for accessing the dataset.",
+      "title": "Url List"
+    },
+    "uri": {
+      "description": "Unified resource name",
+      "title": "Uri",
+      "type": "string"
+    },
+    "repository_identifier": {
+      "description": "Original dataset accession number or identifier in the source repository.",
+      "title": "Repository Identifier",
+      "type": "string"
+    },
+    "additional_identifier_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of additional database or secondary unique identifiers.",
+      "title": "Additional Identifier List"
+    },
+    "alternative_id_list": {
+      "anyOf": [
+        {
+          "items": {
+            "anyOf": [
+              {
+                "pattern": "^domain:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "pattern": "^cv:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "pattern": "^cv-value:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "pattern": "^dataset:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "pattern": "^reference:[a-z][-_a-z0-9]*[a-z0-9]:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              }
+            ],
+            "description": "Node Id"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of additional ids populated from unique value contribution fields.",
+      "title": "Alternative Id List"
+    },
+    "doi": {
+      "anyOf": [
+        {
+          "pattern": "^10[.].+/.+$",
+          "title": "DOI",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Digital Object Identifier (DOI) for the dataset.",
+      "title": "Doi"
+    },
+    "repository_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Repository Name"
+    },
+    "repository_short_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Repository Short Name"
+    },
+    "license": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Dataset license URL defining usage rights for the study.",
+      "examples": [
+        "https://creativecommons.org/publicdomain/zero/1.0/"
+      ],
+      "title": "License"
+    },
+    "license_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Dataset license name.",
+      "examples": [
+        "CC0 v1.0"
+      ],
+      "title": "License Name"
+    },
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Name of the dataset.",
+      "title": "Name"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Comprehensive description or summary abstract of the dataset.",
+      "title": "Description"
+    },
+    "cv_definitions": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvDefinition"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": [],
+      "title": "Cv Definitions"
+    },
+    "mhd_identifier": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Unique MetabolomicsHub Data (MHD) identifier for the dataset.",
+      "title": "Mhd Identifier"
+    },
+    "mhd_metadata_file_url": {
+      "default": null,
+      "description": "URL to the primary MHD metadata file for this dataset.",
+      "title": "Mhd Metadata File Url",
+      "type": "string"
+    },
+    "mhd_metadata_file_hashes": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTermValue"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The cryptographic hash values of the MHD file content, used to verify file integrity and ensure that the file has not been altered. ",
+      "title": "Mhd Metadata File Hashes"
+    },
+    "submission_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Date and time when the dataset was initially submitted to the repository.",
+      "title": "Submission Date"
+    },
+    "public_release_date": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Date and time when the dataset was made publicly accessible.",
+      "title": "Public Release Date"
+    },
+    "submitters": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementContact"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "List of submitters who registered or submitted the dataset.",
+      "title": "Submitters"
+    },
+    "principal_investigators": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementContact"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of principal investigators leading the research study.",
+      "title": "Principal Investigators"
+    },
+    "omics_type": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Omics domains involved in the study (e.g., Metabolomics, Lipidomics).",
+      "title": "Omics Type"
+    },
+    "technology_type": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Analytical technology platforms used (e.g., Mass Spectrometry, NMR).",
+      "title": "Technology Type"
+    },
+    "measurement_type": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Types of measurements performed (e.g., Targeted or Untargeted analysis).",
+      "title": "Measurement Type"
+    },
+    "assay_type": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Assay techniques employed (e.g., LC-MS, GC-MS).",
+      "title": "Assay Type"
+    },
+    "submitter_keywords": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Keywords provided by the dataset submitter as CV terms.",
+      "title": "Submitter Keywords"
+    },
+    "descriptors": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTerm"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Subject descriptors or tags characterizing the dataset as CV terms.",
+      "title": "Descriptors"
+    },
+    "publications": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CvTerm"
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementPublication"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Publications or scientific literature associated with the dataset.",
+      "title": "Publications"
+    },
+    "study_factors": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTermKeyValue"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Experimental study factors varied across samples as CV key-value pairs.",
+      "title": "Study Factors"
+    },
+    "characteristic_values": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/CvTermKeyValue"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Sample characteristics and metadata attributes as CV key-value pairs.",
+      "title": "Characteristic Values"
+    },
+    "protocols": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementProtocol"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of experimental protocols used in sample preparation and analysis.",
+      "title": "Protocols"
+    },
+    "reported_molecular_entities": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementReportedMolecularEntity"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of molecular entities reported as identified or quantified in the dataset.",
+      "title": "Reported Molecular Entities"
+    },
+    "repository_metadata_file_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementMetadataFile"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of repository metadata files included in the dataset announcement.",
+      "title": "Repository Metadata File List"
+    },
+    "raw_data_file_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementRawDataFile"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of raw data files included in the dataset announcement.",
+      "title": "Raw Data File List"
+    },
+    "derived_data_file_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementDerivedDataFile"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of derived data files included in the dataset announcement.",
+      "title": "Derived Data File List"
+    },
+    "supplementary_file_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementSupplementaryFile"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of supplementary files included in the dataset announcement.",
+      "title": "Supplementary File List"
+    },
+    "result_file_list": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/AnnouncementResultFile"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "List of result data files included in the dataset announcement.",
+      "title": "Result File List"
+    }
+  },
+  "required": [
+    "$schema",
+    "profile_uri",
+    "uri",
+    "repository_identifier",
+    "repository_name",
+    "repository_short_name",
+    "submission_date",
+    "public_release_date",
+    "submitters"
+  ],
+  "title": "AnnouncementBaseProfile",
+  "type": "object",
+  "unique_value_alternatives": [
+    [
+      "doi"
+    ],
+    [
+      "repository_name",
+      "repository_identifier"
+    ],
+    [
+      "additional_identifier_list"
+    ]
+  ]
+}

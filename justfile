@@ -16,7 +16,7 @@ clean:
     rm -rf .cache/python .cache/java .cache/gradle .cache/uv .cache/pre-commit
 
 test-python:
-    cd python && uv run pytest
+    cd python && uv sync --extra opa --group dev && PYTHONPATH=. uv run pytest
 
 test-java:
     gradle --project-cache-dir .cache/gradle/project-cache -p java test

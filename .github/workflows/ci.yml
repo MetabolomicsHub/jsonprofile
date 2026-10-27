@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [ main ]
 
 env:
   PRE_COMMIT_HOME: .cache/pre-commit
@@ -17,58 +17,73 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
     env:
       UV_PYTHON: ${{ matrix.python-version }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - uses: extractions/setup-just@v3
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-      - run: just test-python
-      - run: just build-python
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - uses: extractions/setup-just@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - run: just test-python
+    - id: version
+      name: Get current version
+      run: echo "initial_version=$(uv run cz version -p)" >> "$GITHUB_OUTPUT"
 
+    - id: cz
+      name: Bump version and generate changelog
+      uses: commitizen-tools/commitizen-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Print new version
+      run: echo "Initial ${{ steps.version.outputs.initial_version }}. Bumped to version ${{ steps.cz.outputs.version }}"
+    - run: just build-python
+    - name: Publish to PyPI
+      if: ${{ ! startsWith(steps.cz.outputs.version, steps.version.outputs.initial_version) }}
+      run: |
+        echo "Publishing to PyPI..."
+        uv publish -t ${{ secrets.PYPI_TOKEN }}
   java:
     name: Java
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: extractions/setup-just@v3
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-      - uses: gradle/actions/setup-gradle@v4
-      - run: just test-java
-      - run: just build-java
+    - uses: actions/checkout@v4
+    - uses: extractions/setup-just@v3
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "21"
+    - uses: gradle/actions/setup-gradle@v4
+    - run: just test-java
+    - run: just build-java
 
   conformance:
     name: Conformance
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - uses: extractions/setup-just@v3
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-      - uses: gradle/actions/setup-gradle@v4
-      - run: just test
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - uses: extractions/setup-just@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "21"
+    - uses: gradle/actions/setup-gradle@v4
+    - run: just test
 
   pre-commit:
     name: Pre-commit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - uses: extractions/setup-just@v3
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - run: just lint
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - uses: extractions/setup-just@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+    - run: just lint

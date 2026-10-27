@@ -710,8 +710,8 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
                         parent_cv_terms=[
                             BaseCvTerm(
                                 cv_label="MS",
-                                cv_accession="MS:1000076",
-                                name="negative polarity acquisition",
+                                cv_accession="http://purl.obolibrary.org/obo/MS_1003776",
+                                name="acquisition polarity",
                             ),
                         ],
                     ),

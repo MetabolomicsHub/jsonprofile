@@ -59,15 +59,15 @@ class ConstraintChecker(abc.ABC):
         path2 = path2.strip().lstrip("$").strip(".")
         path1 = path1.strip().lstrip("$").strip(".")
         if not path1 and not path2:
-            return "$"
+            return "[*]" if isinstance(value, list) else "$"
         if not path2:
-            return f"$.{path1}"
+            return f"[*].{path1}" if isinstance(value, list) else f"$.{path1}"
+        if not path1:
+            return f"[*].{path2}" if isinstance(value, list) else f"$.{path2}"
 
-        if path2.startswith("["):
-            return f"$.{path1}{path2}" if path1 else f"$.{path2}"
         if isinstance(value, list):
-            return f"$.{path1}[*].{path2}" if path1 else f"$.{path2}"
-        return f"$.{path1}.{path2}" if path1 else f"$.{path2}"
+            return f"$.{path1}[*].{path2}"
+        return f"$.{path1}.{path2}"
 
     def evaluate_precondition(
         self,

@@ -3,11 +3,11 @@ import pathlib
 
 import orjson
 import pytest
+from scripts.profiles.isa_json.metabolights_profile import METABOLIGHTS_BASE_PROFILE
 
 from jsonprofile.profile.base import EnforcementLevel, ValidationRuntimeConfiguration
 from jsonprofile.utils import setup_basic_logging_config
 from jsonprofile.validator import JsonValidator
-from tests.profiles.isa_json.metabolights_profile import METABOLIGHTS_BASE_PROFILE
 
 logger = logging.getLogger(__name__)
 
