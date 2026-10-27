@@ -57,7 +57,6 @@ jobs:
         working_directory: python
         commitizen_version: "4.19.3"
     - name: Build release
-      if: steps.cz.outputs.version != steps.cz.outputs.previous_version
       run: just build-python
     - name: Publish to PyPI
       if: steps.cz.outputs.version != steps.cz.outputs.previous_version
