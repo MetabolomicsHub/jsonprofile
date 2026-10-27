@@ -60,7 +60,9 @@ jobs:
       run: just build-python
     - name: Publish to PyPI
       if: steps.cz.outputs.version != steps.cz.outputs.previous_version
-      run: cd python && uv publish -t ${{ secrets.PYPI_TOKEN }}
+      env:
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      run: uv publish .cache/python/dist/*
 
   java:
     name: Java
