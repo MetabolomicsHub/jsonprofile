@@ -14,6 +14,28 @@ from jsonprofile.profile.base import (
     JsonProfileBaseModel,
 )
 
+INT64_MIN = -(2**63)
+INT64_MAX = 2**63 - 1
+DECIMAL_MAX_COEFFICIENT = 2**96 - 1
+DECIMAL_MAX_SCALE = 28
+
+
+def decimal_fits_shared_range(value: Decimal) -> bool:
+    """Return whether a finite Decimal fits Rust Decimal's 96-bit representation."""
+    if not value.is_finite():
+        return False
+    parts = value.as_tuple()
+    coefficient = int("".join(map(str, parts.digits)) or "0")
+    exponent = parts.exponent
+    scale = max(0, -exponent)
+    if scale > DECIMAL_MAX_SCALE:
+        return False
+    if exponent > 0 and coefficient:
+        if len(str(coefficient)) + exponent > len(str(DECIMAL_MAX_COEFFICIENT)):
+            return False
+        coefficient *= 10**exponent
+    return coefficient <= DECIMAL_MAX_COEFFICIENT
+
 
 class Precondition(JsonProfileBaseModel):
     """Condition that controls whether a constraint should be evaluated."""
@@ -306,6 +328,13 @@ class IntegerEnumConstraint(Constraint):
         ),
     ]
 
+    @field_validator("options")
+    @classmethod
+    def int64_option_keys(cls, value):
+        if any(key < INT64_MIN or key > INT64_MAX for key in value):
+            raise ValueError("integer-enum option keys must fit signed 64-bit range")
+        return value
+
 
 class IntegerConstraint(Constraint):
     """Validates that a value is a valid integer within an optional range.
@@ -320,13 +349,17 @@ class IntegerConstraint(Constraint):
     minimum: Annotated[
         Optional[int],
         Field(
-            description="Minimum allowed value (inclusive). None means no lower bound."
+            description="Minimum allowed value (inclusive). None means no lower bound.",
+            ge=INT64_MIN,
+            le=INT64_MAX,
         ),
     ] = None
     maximum: Annotated[
         Optional[int],
         Field(
-            description="Maximum allowed value (inclusive). None means no upper bound."
+            description="Maximum allowed value (inclusive). None means no upper bound.",
+            ge=INT64_MIN,
+            le=INT64_MAX,
         ),
     ] = None
 
@@ -342,7 +375,11 @@ class PositiveIntegerConstraint(IntegerConstraint):
     )
     minimum: Annotated[
         Optional[int],
-        Field(description="Minimum allowed value (inclusive). Defaults to 1."),
+        Field(
+            description="Minimum allowed value (inclusive). Defaults to 1.",
+            ge=INT64_MIN,
+            le=INT64_MAX,
+        ),
     ] = 1
 
 
@@ -357,7 +394,11 @@ class NonNegativeIntegerConstraint(IntegerConstraint):
     )
     minimum: Annotated[
         Optional[int],
-        Field(description="Minimum allowed value (inclusive). Defaults to 0."),
+        Field(
+            description="Minimum allowed value (inclusive). Defaults to 0.",
+            ge=INT64_MIN,
+            le=INT64_MAX,
+        ),
     ] = 0
 
 
@@ -385,7 +426,7 @@ class BooleanConstraint(Constraint):
 
 
 class DecimalConstraint(Constraint):
-    """Validates that a value is a valid floating-point number.
+    """Validates that a value is a valid decimal number.
 
     Supports optional range bounds, scientific notation control,
     and decimal precision limits.
@@ -397,15 +438,29 @@ class DecimalConstraint(Constraint):
     minimum: Annotated[
         Optional[Decimal],
         Field(
-            description="Minimum allowed value (inclusive). None means no lower bound."
+            description="Minimum allowed value (inclusive). None means no lower bound.",
+            ge=Decimal(-DECIMAL_MAX_COEFFICIENT),
+            le=Decimal(DECIMAL_MAX_COEFFICIENT),
         ),
     ] = None
     maximum: Annotated[
         Optional[Decimal],
         Field(
-            description="Maximum allowed value (inclusive). None means no upper bound."
+            description="Maximum allowed value (inclusive). None means no upper bound.",
+            ge=Decimal(-DECIMAL_MAX_COEFFICIENT),
+            le=Decimal(DECIMAL_MAX_COEFFICIENT),
         ),
     ] = None
+
+    @field_validator("minimum", "maximum")
+    @classmethod
+    def bounds_fit_shared_decimal_range(cls, value):
+        if value is not None and not decimal_fits_shared_range(value):
+            raise ValueError(
+                "decimal bounds must fit a 96-bit coefficient and scale <= 28"
+            )
+        return value
+
     allow_scientific_notation: Annotated[
         Optional[bool],
         Field(

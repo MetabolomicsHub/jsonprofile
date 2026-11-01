@@ -25,7 +25,7 @@ fn main() -> Result<(), String> {
     )?;
 
     let runtime_config = ValidationRuntimeConfiguration {
-        offline_mode: Some(true),
+        offline_mode: Some(false),
         max_messages_for_each_requirement: Some(10),
         ..Default::default()
     };

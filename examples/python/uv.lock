@@ -734,7 +734,7 @@ wheels = [
 
 [[package]]
 name = "jsonprofile"
-version = "0.1.0"
+version = "0.2.0"
 source = { directory = "../../python" }
 dependencies = [
     { name = "bioregistry", version = "0.13.67", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -783,7 +783,7 @@ dev = [
     { name = "pre-commit", specifier = ">=3.10.1" },
     { name = "pytest", specifier = ">=9.0.3" },
     { name = "ruff", specifier = ">=0.17.0" },
-    { name = "uv-build", specifier = ">=0.9.8" },
+    { name = "uv-build", specifier = ">=0.13.0,<0.14.0" },
 ]
 
 [[package]]

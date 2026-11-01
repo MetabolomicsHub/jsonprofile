@@ -233,7 +233,7 @@ class JsonValidator:
         elif isinstance(profile, dict):
             target_profile = JsonProfile.model_validate(profile, by_alias=True)
         if isinstance(profile, JsonProfile):
-            target_profile = profile
+            target_profile = profile.model_copy(deep=True)
         if not target_profile or not isinstance(target_profile, JsonProfile):
             raise ValueError(
                 "Json profile load failure. "
@@ -284,6 +284,8 @@ class JsonValidator:
 
     @staticmethod
     def extend_profile(parent_profile: None | JsonProfile, input_profile: JsonProfile):
+        # Merge into a detached copy because profiles may be reused or cached.
+        input_profile = input_profile.model_copy(deep=True)
         if not parent_profile:
             if not input_profile.configuration:
                 input_profile.configuration = JsonProfileConfiguration(
@@ -301,16 +303,21 @@ class JsonValidator:
             parent_profile.name,
         )
         new_requirements = input_profile.requirements or {}
-        input_profile.requirements = dict(parent_profile.requirements or {})
+        input_profile.requirements = {
+            key: value.model_copy(deep=True) if value is not None else None
+            for key, value in (parent_profile.requirements or {}).items()
+        }
 
         if not input_profile.configuration:
             input_profile.configuration = (
                 parent_profile.configuration or JsonProfileConfiguration()
-            )
+            ).model_copy(deep=True)
 
         # set configuration fields from parent if they are not defined.
         config = input_profile.configuration
-        parent_config = parent_profile.configuration or JsonProfileConfiguration()
+        parent_config = (
+            parent_profile.configuration or JsonProfileConfiguration()
+        ).model_copy(deep=True)
         for field, _ in config.__class__.model_fields.items():
             val = getattr(config, field)
             if val is None:
@@ -526,8 +533,9 @@ class JsonValidator:
         process_reporting_threshold_in_secs: float = 5.0,
     ) -> JsonValidationResult:
         id_fields = self.json_profile.configuration.object_unique_id_fields
-        if not runtime_config:
-            runtime_config = ValidationRuntimeConfiguration()
+        runtime_config = (
+            runtime_config or ValidationRuntimeConfiguration()
+        ).model_copy(deep=True)
         unique_id_objects = {}
         if id_fields:
             unique_id_objects = self.update_unique_object_dict(
@@ -973,7 +981,9 @@ class JsonValidator:
                         )
 
                 if field_requirement.value_constraint:
-                    constraint = field_requirement.value_constraint
+                    constraint = field_requirement.value_constraint.model_copy(
+                        deep=True
+                    )
                     checker = self.profile_validator_factory.get_checker(constraint)
                     skip = False
                     if runtime_config and runtime_config.skip_decimal_validations:
@@ -981,12 +991,10 @@ class JsonValidator:
                             skip = True
 
                     if not skip:
-                        if not field_requirement.value_constraint.description:
-                            field_requirement.value_constraint.description = (
-                                field_requirement.description
-                            )
+                        if not constraint.description:
+                            constraint.description = field_requirement.description
                         res = checker.validate_constraint(
-                            constraint=field_requirement.value_constraint,
+                            constraint=constraint,
                             value=x.value,
                             root=input_json,
                             context=context,

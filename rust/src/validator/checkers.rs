@@ -127,7 +127,7 @@ impl ConstraintChecker for NotNullChecker {
             messages.push("value is in null value list");
             is_null = true;
         }
-        let mut evaluation = !is_null;
+        let mut evaluation = !is_null || in_exceptional_values(constraint, Some(value), None);
         if constraint.is_negated() {
             evaluation = !evaluation;
         }
@@ -861,7 +861,7 @@ impl ConstraintChecker for CollectionChecker {
             }
         } else {
             return (
-                false,
+                constraint.is_negated(),
                 Some(format!(
                     "{:?} is not a collection.",
                     constraint.common.json_path
@@ -1005,6 +1005,7 @@ impl ConstraintChecker for AllowedCvListChecker {
     ) -> (bool, Option<String>) {
         let ConstraintKind::AllowedCvList {
             allowed_cv_list,
+            exceptional_cv_list,
             allow_synonym,
             is_cv_term_value_required,
             ..
@@ -1054,6 +1055,14 @@ impl ConstraintChecker for AllowedCvListChecker {
                             name_req = true;
                             msg = format!("'{param}' term is in exception cv term list.");
                         }
+                        if !name_req
+                            && exceptional_cv_list
+                                .as_ref()
+                                .is_some_and(|list| list.iter().any(|x| x == &param.cv_label))
+                        {
+                            name_req = true;
+                            msg = "CV source is in exception list".to_string();
+                        }
                         if !name_req {
                             if let Some(list) = allowed_cv_list.as_ref().filter(|l| !l.is_empty()) {
                                 let in_list =
@@ -1068,7 +1077,8 @@ impl ConstraintChecker for AllowedCvListChecker {
                                             None,
                                             allow_synonym.unwrap_or(false),
                                         );
-                                        return (ok, Some(format_message(constraint, &m)));
+                                        name_req = ok;
+                                        msg = m;
                                     }
                                 } else {
                                     msg = format!(
@@ -1085,7 +1095,8 @@ impl ConstraintChecker for AllowedCvListChecker {
                                     None,
                                     allow_synonym.unwrap_or(false),
                                 );
-                                return (ok, Some(format_message(constraint, &m)));
+                                name_req = ok;
+                                msg = m;
                             }
                         }
                     }
@@ -1248,6 +1259,7 @@ impl ConstraintChecker for ParentCvTermChecker {
     ) -> (bool, Option<String>) {
         let ConstraintKind::ParentCvTerm {
             parent_cv_terms,
+            exceptional_cv_list,
             allow_synonym,
             is_cv_term_value_required,
             ..
@@ -1296,6 +1308,14 @@ impl ConstraintChecker for ParentCvTermChecker {
                         if in_exceptional_values(constraint, None, Some(&base_param.to_string())) {
                             name_req = true;
                             msg = "cv term is in exception list.".to_string();
+                        }
+                        if !name_req
+                            && exceptional_cv_list
+                                .as_ref()
+                                .is_some_and(|list| list.iter().any(|x| x == &param.cv_label))
+                        {
+                            name_req = true;
+                            msg = "CV source is in exception list".to_string();
                         }
                         if !name_req {
                             if context.runtime_config.is_offline_mode() {
@@ -1605,31 +1625,19 @@ impl ConstraintChecker for OrcidChecker {
         _root: &Value,
         _context: &JsonProfileRunContext,
     ) -> (bool, Option<String>) {
-        let is_null = is_null_by_config(constraint, value, false);
         let mut evaluation = false;
-        let message = if is_null {
-            if in_exceptional_values(constraint, None, None) {
-                evaluation = true;
-            }
+        let str_val = display_val(value);
+        let message = if value.is_null() {
             "value is null".to_string()
         } else {
-            let str_val = display_val(value);
-            if in_exceptional_values(constraint, Some(value), Some(&str_val)) {
+            let re = regex::Regex::new(r"^\s*\d{4}-\d{4}-\d{4}-\d{3}[0-9X]\s*$").unwrap();
+            if re.is_match(&str_val) && verify_orcid_checksum(str_val.trim()) {
                 evaluation = true;
-                String::new()
+                "value is a valid ORCID".to_string()
             } else {
-                let re = regex::Regex::new(r"^\s*\d{4}-\d{4}-\d{4}-\d{3}[0-9X]\s*$").unwrap();
-                if re.is_match(&str_val) && verify_orcid_checksum(str_val.trim()) {
-                    evaluation = true;
-                    "value is a valid ORCID".to_string()
-                } else {
-                    "value is not a valid ORCID".to_string()
-                }
+                "value is not a valid ORCID".to_string()
             }
         };
-        if constraint.is_negated() {
-            evaluation = !evaluation;
-        }
         (evaluation, Some(format_message(constraint, &message)))
     }
 }
@@ -1666,7 +1674,11 @@ impl ConstraintChecker for AccessibleUrlChecker {
         root: &Value,
         context: &JsonProfileRunContext,
     ) -> (bool, Option<String>) {
-        UriChecker.validate(constraint, value, root, context)
+        let mut inner_constraint = constraint.clone();
+        inner_constraint.common.negated = None;
+        inner_constraint.common.null_values = None;
+        inner_constraint.common.exceptional_values = None;
+        UriChecker.validate(&inner_constraint, value, root, context)
     }
 }
 

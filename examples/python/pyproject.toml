@@ -1,7 +1,7 @@
 [project]
 name = "python-example"
 version = "0.1.0"
-description = "Add your description here"
+description = "JsonProfile example python implementation"
 readme = "README.md"
 authors = [
     { name = "oyurekten", email = "ozgury@ebi.ac.uk" }

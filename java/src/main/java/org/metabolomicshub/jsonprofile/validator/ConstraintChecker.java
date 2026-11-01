@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.metabolomicshub.jsonprofile.profile.constraints.Constraint;
+import org.metabolomicshub.jsonprofile.profile.constraints.CustomConstraint;
 import org.metabolomicshub.jsonprofile.profile.constraints.DecimalConstraint;
 import org.metabolomicshub.jsonprofile.profile.constraints.Evaluation;
 
@@ -194,9 +195,37 @@ public abstract class ConstraintChecker {
       boolean isValid;
       String message;
       if (pre.isValid()) {
-        CheckResult res = checker.validate(constraint, subValue, root, context);
-        isValid = res.isValid();
-        message = res.message();
+        if (constraint instanceof CustomConstraint) {
+          boolean nullValue = subValue == null;
+          if (!nullValue && constraint.getNullValues() != null) {
+            for (String configuredNull : constraint.getNullValues()) {
+              if (configuredNull != null && configuredNull.equals(subValue.toString())) {
+                nullValue = true;
+                break;
+              }
+            }
+          }
+          boolean exceptional = false;
+          if (constraint.getExceptionalValues() != null) {
+            for (Object configured : constraint.getExceptionalValues()) {
+              if ((configured == null && nullValue)
+                  || (configured != null && configured.equals(subValue))) {
+                exceptional = true;
+                break;
+              }
+            }
+          }
+          CheckResult res =
+              exceptional
+                  ? new CheckResult(true, "value is in exceptional list")
+                  : checker.validate(constraint, nullValue ? null : subValue, root, context);
+          isValid = constraint.isNegated() ? !res.isValid() : res.isValid();
+          message = res.message() != null ? res.message() : "";
+        } else {
+          CheckResult res = checker.validate(constraint, subValue, root, context);
+          isValid = res.isValid();
+          message = res.message();
+        }
       } else {
         isValid = true;
         message = "Precondition does not meet: " + pre.message();

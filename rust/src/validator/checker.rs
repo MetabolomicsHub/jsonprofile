@@ -258,7 +258,46 @@ pub fn validate_constraint(
     let (pre_ok, pre_msg) = evaluate_precondition(constraint, value, root, context);
     let sub_value = get_json_path_value(constraint, value, context);
     if pre_ok {
-        let (is_valid, msg) = checker.validate(constraint, &sub_value, root, context);
+        let (is_valid, msg) = if matches!(&constraint.kind, ConstraintKind::Custom { .. }) {
+            let displayed = sub_value
+                .as_str()
+                .map(str::to_string)
+                .unwrap_or_else(|| sub_value.to_string());
+            let null_value = sub_value.is_null()
+                || constraint
+                    .common
+                    .null_values
+                    .as_ref()
+                    .is_some_and(|values| {
+                        values
+                            .iter()
+                            .any(|v| v.as_deref() == Some(displayed.as_str()))
+                    });
+            let exceptional = constraint
+                .common
+                .exceptional_values
+                .as_ref()
+                .is_some_and(|values| {
+                    values.iter().any(|v| {
+                        (v.is_null() && null_value)
+                            || v == &sub_value
+                            || v.as_str().is_some_and(|s| s == displayed)
+                    })
+                });
+            let (mut valid, message) = if exceptional {
+                (true, Some("value is in exceptional list".to_string()))
+            } else if null_value {
+                checker.validate(constraint, &Value::Null, root, context)
+            } else {
+                checker.validate(constraint, &sub_value, root, context)
+            };
+            if constraint.is_negated() {
+                valid = !valid;
+            }
+            (valid, message)
+        } else {
+            checker.validate(constraint, &sub_value, root, context)
+        };
         ConstraintValidationResult {
             is_valid,
             message: msg,

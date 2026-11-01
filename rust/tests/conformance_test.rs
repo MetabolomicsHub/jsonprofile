@@ -78,6 +78,79 @@ fn cv_term_result(term: Value, valid: bool, negated: bool) -> jsonprofile::JsonV
     )
 }
 
+fn cv_list_result(term: Value, valid: bool, negated: bool) -> jsonprofile::JsonValidationResult {
+    let profile = serde_json::json!({
+        "id": "https://example.org/cv-list-test",
+        "version": "1.0.0",
+        "name": "CV list test profile",
+        "requirements": {
+            "$.term": {
+                "code": "CV-LIST-TEST",
+                "value_constraint": {
+                    "type": "allowed-cv-list",
+                    "allowed_cv_list": ["MS"],
+                    "is_cv_term_value_required": true,
+                    "negated": negated
+                }
+            }
+        }
+    });
+    let validator = JsonValidator::with_options(
+        None,
+        ProfileSource::Json(profile),
+        HashMap::new(),
+        Some(Arc::new(FixedCvTermSearch { valid })),
+        None,
+    )
+    .expect("validator should be constructed");
+    validator.validate_dict(
+        &serde_json::json!({"term": term}),
+        Some(ValidationRuntimeConfiguration {
+            offline_mode: Some(false),
+            ..Default::default()
+        }),
+    )
+}
+
+fn parent_cv_term_result(
+    term: Value,
+    valid: bool,
+    negated: bool,
+) -> jsonprofile::JsonValidationResult {
+    let profile = serde_json::json!({
+        "id": "https://example.org/cv-parent-test",
+        "version": "1.0.0",
+        "name": "CV parent test profile",
+        "requirements": {
+            "$.term": {
+                "code": "CV-PARENT-TEST",
+                "value_constraint": {
+                    "type": "parent-cv-term",
+                    "parent_cv_terms": [{
+                        "cv_label": "MS", "cv_accession": "MS:ROOT", "name": "root"
+                    }],
+                    "negated": negated
+                }
+            }
+        }
+    });
+    let validator = JsonValidator::with_options(
+        None,
+        ProfileSource::Json(profile),
+        HashMap::new(),
+        Some(Arc::new(FixedCvTermSearch { valid })),
+        None,
+    )
+    .expect("validator should be constructed");
+    validator.validate_dict(
+        &serde_json::json!({"term": term}),
+        Some(ValidationRuntimeConfiguration {
+            offline_mode: Some(false),
+            ..Default::default()
+        }),
+    )
+}
+
 #[test]
 fn cv_term_online_results_apply_value_requirement_and_negation() {
     let missing_value = serde_json::json!({
@@ -107,6 +180,42 @@ fn cv_term_exception_source_applies_value_requirement_and_negation() {
         .errors
         .contains_key("$.term"));
     assert!(!cv_term_result(term, true, true)
+        .errors
+        .contains_key("$.term"));
+}
+
+#[test]
+fn cv_list_online_results_apply_value_requirement_and_negation() {
+    let missing_value = serde_json::json!({
+        "cv_label": "MS", "cv_accession": "MS:1", "name": "term", "value": ""
+    });
+    let valid_value = serde_json::json!({
+        "cv_label": "MS", "cv_accession": "MS:1", "name": "term", "value": "x"
+    });
+
+    assert!(cv_list_result(missing_value, true, false)
+        .errors
+        .contains_key("$.term"));
+    assert!(cv_list_result(valid_value.clone(), true, true)
+        .errors
+        .contains_key("$.term"));
+    assert!(!cv_list_result(valid_value, false, true)
+        .errors
+        .contains_key("$.term"));
+}
+
+#[test]
+fn parent_cv_online_lookup_result_is_preserved() {
+    let term = serde_json::json!({
+        "cv_label": "MS", "cv_accession": "MS:1", "name": "term", "value": "x"
+    });
+    assert!(!parent_cv_term_result(term.clone(), true, false)
+        .errors
+        .contains_key("$.term"));
+    assert!(parent_cv_term_result(term.clone(), false, false)
+        .errors
+        .contains_key("$.term"));
+    assert!(!parent_cv_term_result(term, false, true)
         .errors
         .contains_key("$.term"));
 }

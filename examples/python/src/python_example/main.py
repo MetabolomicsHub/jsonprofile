@@ -7,7 +7,7 @@ from jsonprofile.validator.json_validator import JsonValidator
 
 
 def main() -> None:
-    repository_root = Path(__file__).resolve().parents[2]
+    repository_root = Path(__file__).resolve().parents[4]
     resources = repository_root / "shared" / "resources" / "mztab-m"
     profiles = resources / "profiles"
     default_profile_id = (
@@ -25,7 +25,7 @@ def main() -> None:
     result = validator.validate_json_file(
         resources / "manual_null_MTBLS263.mztab.json",
         runtime_config=ValidationRuntimeConfiguration(
-            offline_mode=True,
+            offline_mode=False,
             max_messages_for_each_requirement=10,
         ),
     )

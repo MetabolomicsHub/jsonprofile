@@ -315,6 +315,451 @@
         "REQ-CGROUP"
       ],
       "expectedRecommendationCodes": []
-    }
+    },
+    {
+          "id": "constraint-boundaries-null-exceptions-negation-and-offline-cv",
+          "description": "Checks inclusive scalar boundaries, explicit null exceptions, negation, and offline CV value requirements consistently across runtimes",
+          "profile": {
+            "id": "https://example.org/profiles/constraint-semantics-1.0.0.json",
+            "version": "1.0.0",
+            "name": "Constraint Semantics Profile",
+            "requirements": {
+              "$.lower": {
+                "code": "BOUNDARY-LOWER",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "positive-integer"
+                }
+              },
+              "$.upper": {
+                "code": "BOUNDARY-UPPER",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 3
+                }
+              },
+              "$.out": {
+                "code": "BOUNDARY-OUT",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 3
+                }
+              },
+              "$.null_exception": {
+                "code": "NULL-EXCEPTION",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "string-length",
+                  "minimum": 1,
+                  "exceptional_values": [null]
+                }
+              },
+              "$.negated_match": {
+                "code": "NEGATED-MATCH",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "regex",
+                  "pattern": "^ok$",
+                  "negated": true
+                }
+              },
+              "$.negated_nonmatch": {
+                "code": "NEGATED-NONMATCH",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "regex",
+                  "pattern": "^ok$",
+                  "negated": true
+                }
+              },
+              "$.cv_required_value": {
+                "code": "CV-REQUIRED-VALUE",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "cv-term",
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true
+                }
+              },
+              "$.cv_negated_exception": {
+                "code": "CV-NEGATED-EXCEPTION",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "cv-term",
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true,
+                  "negated": true
+                }
+              },
+              "$.not_null_exception": {
+                "code": "NOT-NULL-EXCEPTION",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "not-null",
+                  "exceptional_values": [null]
+                }
+              },
+              "$.not_null_negated_exception": {
+                "code": "NOT-NULL-NEGATED-EXCEPTION",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "not-null",
+                  "exceptional_values": [null],
+                  "negated": true
+                }
+              },
+              "$.collection_type_negated": {
+                "code": "COLLECTION-TYPE-NEGATED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "items-count",
+                  "min_occurs": 1,
+                  "negated": true
+                }
+              },
+              "$.cv_list_required_value": {
+                "code": "CV-LIST-REQUIRED-VALUE",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "allowed-cv-list",
+                  "allowed_cv_list": ["EX"],
+                  "is_cv_term_value_required": true
+                }
+              },
+              "$.cv_list_negated": {
+                "code": "CV-LIST-NEGATED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "allowed-cv-list",
+                  "allowed_cv_list": ["EX"],
+                  "is_cv_term_value_required": true,
+                  "negated": true
+                }
+              },
+              "$.custom_exception": {
+                "code": "CUSTOM-EXCEPTION",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "custom",
+                  "name": "orcid",
+                  "exceptional_values": [null]
+                }
+              },
+              "$.custom_negated": {
+                "code": "CUSTOM-NEGATED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "custom",
+                  "name": "orcid",
+                  "negated": true
+                }
+              },
+              "$.cv_list_source_exception_required": {
+                "code": "CV-LIST-SOURCE-EXCEPTION-REQUIRED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "allowed-cv-list",
+                  "allowed_cv_list": ["MS"],
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true
+                }
+              },
+              "$.cv_list_source_exception_negated": {
+                "code": "CV-LIST-SOURCE-EXCEPTION-NEGATED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "allowed-cv-list",
+                  "allowed_cv_list": ["MS"],
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true,
+                  "negated": true
+                }
+              },
+              "$.parent_source_exception_required": {
+                "code": "PARENT-SOURCE-EXCEPTION-REQUIRED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "parent-cv-term",
+                  "parent_cv_terms": [
+                    {
+                      "cv_label": "MS",
+                      "cv_accession": "MS:ROOT",
+                      "name": "root"
+                    }
+                  ],
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true
+                }
+              },
+              "$.parent_source_exception_negated": {
+                "code": "PARENT-SOURCE-EXCEPTION-NEGATED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "parent-cv-term",
+                  "parent_cv_terms": [
+                    {
+                      "cv_label": "MS",
+                      "cv_accession": "MS:ROOT",
+                      "name": "root"
+                    }
+                  ],
+                  "exceptional_cv_list": ["EX"],
+                  "is_cv_term_value_required": true,
+                  "negated": true
+                }
+              },
+              "$.int64_min": {
+                "code": "INT64-MIN",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer",
+                  "minimum": -9223372036854775808,
+                  "maximum": -9223372036854775808
+                }
+              },
+              "$.int64_max": {
+                "code": "INT64-MAX",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer",
+                  "minimum": 9223372036854775807,
+                  "maximum": 9223372036854775807
+                }
+              },
+              "$.int64_below": {
+                "code": "INT64-BELOW",
+                "enforcement_level": "required",
+                "value_constraint": {"type": "integer"}
+              },
+              "$.int64_above": {
+                "code": "INT64-ABOVE",
+                "enforcement_level": "required",
+                "value_constraint": {"type": "integer"}
+              },
+              "$.int64_enum_min": {
+                "code": "INT64-ENUM-MIN",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer-enum",
+                  "options": {
+                    "-9223372036854775808": "minimum",
+                    "9223372036854775807": "maximum"
+                  }
+                }
+              },
+              "$.int64_enum_max": {
+                "code": "INT64-ENUM-MAX",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer-enum",
+                  "options": {
+                    "-9223372036854775808": "minimum",
+                    "9223372036854775807": "maximum"
+                  }
+                }
+              },
+              "$.int64_enum_above": {
+                "code": "INT64-ENUM-ABOVE",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "integer-enum",
+                  "options": {
+                    "-9223372036854775808": "minimum",
+                    "9223372036854775807": "maximum"
+                  }
+                }
+              },
+              "$.decimal_scientific_default": {
+                "code": "DECIMAL-SCI-DEFAULT",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "1000",
+                  "maximum": "1000"
+                }
+              },
+              "$.decimal_scientific_disabled": {
+                "code": "DECIMAL-SCI-DISABLED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "1000",
+                  "maximum": "1000",
+                  "allow_scientific_notation": false
+                }
+              },
+              "$.decimal_positive_exponent_scale": {
+                "code": "DECIMAL-POS-EXP-SCALE",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "1000",
+                  "maximum": "1000",
+                  "min_scale": 0,
+                  "max_scale": 0
+                }
+              },
+              "$.decimal_negative_exponent_scale": {
+                "code": "DECIMAL-NEG-EXP-SCALE",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "0.001",
+                  "maximum": "0.001",
+                  "min_scale": 3,
+                  "max_scale": 3
+                }
+              },
+              "$.decimal_scale_overflow": {
+                "code": "DECIMAL-SCALE-OVERFLOW",
+                "enforcement_level": "required",
+                "value_constraint": {"type": "decimal"}
+              },
+              "$.decimal_coefficient_max": {
+                "code": "DECIMAL-COEFFICIENT-MAX",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "79228162514264337593543950335",
+                  "maximum": "79228162514264337593543950335"
+                }
+              },
+              "$.decimal_coefficient_overflow": {
+                "code": "DECIMAL-COEFFICIENT-OVERFLOW",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "0"
+                }
+              },
+              "$.decimal_nonfinite_rejected": {
+                "code": "DECIMAL-NONFINITE-REJECTED",
+                "enforcement_level": "required",
+                "value_constraint": {"type": "decimal"}
+              },
+              "$.decimal_nonfinite_allowed": {
+                "code": "DECIMAL-NONFINITE-ALLOWED",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "allow_non_finite_values": true
+                }
+              },
+              "$.decimal_json_number": {
+                "code": "DECIMAL-JSON-NUMBER",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "decimal",
+                  "minimum": "0.1",
+                  "maximum": "0.1"
+                }
+              }
+            }
+          },
+          "document": {
+            "lower": 1,
+            "upper": 3,
+            "out": 4,
+            "null_exception": null,
+            "negated_match": "ok",
+            "negated_nonmatch": "no",
+            "cv_required_value": {
+              "cv_label": "EX",
+              "cv_accession": "EX:1",
+              "name": "term",
+              "value": ""
+            },
+            "cv_negated_exception": {
+              "cv_label": "EX",
+              "cv_accession": "EX:1",
+              "name": "term",
+              "value": "5"
+            },
+            "not_null_exception": null,
+            "not_null_negated_exception": null,
+            "collection_type_negated": "not-a-list",
+            "cv_list_required_value": {
+              "cv_label": "EX",
+              "cv_accession": "EX:2",
+              "name": "term",
+              "value": ""
+            },
+            "cv_list_negated": {
+              "cv_label": "EX",
+              "cv_accession": "EX:3",
+              "name": "term",
+              "value": "5"
+            },
+            "custom_exception": null,
+            "custom_negated": "invalid",
+            "cv_list_source_exception_required": {
+              "cv_label": "EX",
+              "cv_accession": "EX:4",
+              "name": "term",
+              "value": ""
+            },
+            "cv_list_source_exception_negated": {
+              "cv_label": "EX",
+              "cv_accession": "EX:5",
+              "name": "term",
+              "value": "5"
+            },
+            "parent_source_exception_required": {
+              "cv_label": "EX",
+              "cv_accession": "EX:6",
+              "name": "term",
+              "value": ""
+            },
+            "parent_source_exception_negated": {
+              "cv_label": "EX",
+              "cv_accession": "EX:7",
+              "name": "term",
+              "value": "5"
+            },
+            "int64_min": "-9223372036854775808",
+            "int64_max": "9223372036854775807",
+            "int64_below": "-9223372036854775809",
+            "int64_above": "9223372036854775808",
+            "int64_enum_min": "-9223372036854775808",
+            "int64_enum_max": "9223372036854775807",
+            "int64_enum_above": "9223372036854775808",
+            "decimal_scientific_default": "1e3",
+            "decimal_scientific_disabled": "1e3",
+            "decimal_positive_exponent_scale": "1e3",
+            "decimal_negative_exponent_scale": "1e-3",
+            "decimal_scale_overflow": "1e-29",
+            "decimal_coefficient_max": "79228162514264337593543950335",
+            "decimal_coefficient_overflow": "79228162514264337593543950336",
+            "decimal_nonfinite_rejected": "NaN",
+            "decimal_nonfinite_allowed": "NaN",
+            "decimal_json_number": 0.1
+          },
+          "offlineMode": true,
+          "expectedErrorCodes": [
+            "BOUNDARY-OUT",
+            "NEGATED-MATCH",
+            "CV-REQUIRED-VALUE",
+            "CV-NEGATED-EXCEPTION",
+            "NOT-NULL-NEGATED-EXCEPTION",
+            "CV-LIST-REQUIRED-VALUE",
+            "CV-LIST-NEGATED",
+            "CV-LIST-SOURCE-EXCEPTION-REQUIRED",
+            "CV-LIST-SOURCE-EXCEPTION-NEGATED",
+            "PARENT-SOURCE-EXCEPTION-REQUIRED",
+            "PARENT-SOURCE-EXCEPTION-NEGATED",
+            "INT64-BELOW",
+            "INT64-ABOVE",
+            "INT64-ENUM-ABOVE",
+            "DECIMAL-SCI-DISABLED",
+            "DECIMAL-SCALE-OVERFLOW",
+            "DECIMAL-COEFFICIENT-OVERFLOW",
+            "DECIMAL-NONFINITE-REJECTED"
+          ],
+          "expectedRecommendationCodes": []
+        }
   ]
 }

@@ -97,6 +97,10 @@ Any constraint may specify a `precondition` with one or more `evaluations`, comb
 
 All constraints also share common modifiers: `json_path`, `is_reference_field`, `precondition`, `default_precondition_evaluation`, `negated`, `null_values`, and `exceptional_values`.
 
+Integer values and integer-enum keys use the signed 64-bit range in every implementation: `-9223372036854775808` through `9223372036854775807`, inclusive. Integer values outside this range fail validation, and integer constraint bounds or enum keys outside it make the profile invalid.
+
+Decimal values use exact decimal arithmetic, not binary floating point. To keep all implementations within the shared representation, finite values and bounds must fit a 96-bit coefficient and a scale from 0 through 28. Scientific notation is allowed by default; set `allow_scientific_notation` to `false` to reject it. `min_scale` and `max_scale` count digits to the right of the decimal point after exponent normalization, with integer-valued numbers having scale zero.
+
 ---
 
 ## 4. Example Profile & Multi-Language Usage Snippets

@@ -2389,7 +2389,7 @@
     },
     "DecimalConstraint": {
       "additionalProperties": false,
-      "description": "Validates that a value is a valid floating-point number.\n\nSupports optional range bounds, scientific notation control,\nand decimal precision limits.",
+      "description": "Validates that a value is a valid decimal number.\n\nSupports optional range bounds, scientific notation control,\nand decimal precision limits.",
       "properties": {
         "validator": {
           "anyOf": [
@@ -2554,6 +2554,8 @@
         "minimum": {
           "anyOf": [
             {
+              "maximum": 7.922816251426434e+28,
+              "minimum": -7.922816251426434e+28,
               "type": "number"
             },
             {
@@ -2570,6 +2572,8 @@
         "maximum": {
           "anyOf": [
             {
+              "maximum": 7.922816251426434e+28,
+              "minimum": -7.922816251426434e+28,
               "type": "number"
             },
             {
@@ -3518,6 +3522,8 @@
         "minimum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {
@@ -3531,6 +3537,8 @@
         "maximum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {
@@ -4053,6 +4061,8 @@
         "minimum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {
@@ -4066,6 +4076,8 @@
         "maximum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {
@@ -4938,6 +4950,8 @@
         "minimum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {
@@ -4951,6 +4965,8 @@
         "maximum": {
           "anyOf": [
             {
+              "maximum": 9223372036854775807,
+              "minimum": -9223372036854775808,
               "type": "integer"
             },
             {

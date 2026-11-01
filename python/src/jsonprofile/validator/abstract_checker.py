@@ -9,6 +9,7 @@ import jsonpath_ng
 from jsonprofile.profile.base import JsonPath, JsonProfileBaseModel
 from jsonprofile.profile.constraints.constraints import (
     Constraint,
+    CustomConstraint,
     DecimalConstraint,
 )
 
@@ -204,9 +205,28 @@ class ConstraintChecker(abc.ABC):
 
             sub_value = self.get_json_path_value(constraint, value, context)
             if success:
-                is_valid, message = checker.validate(
-                    constraint, sub_value, root=root, context=context
-                )
+                if isinstance(constraint, CustomConstraint):
+                    null_value = sub_value is None or (
+                        constraint.null_values
+                        and str(sub_value) in constraint.null_values
+                    )
+                    exceptional = constraint.exceptional_values or []
+                    if sub_value in exceptional or (null_value and None in exceptional):
+                        is_valid, message = True, "value is in exceptional list"
+                    else:
+                        is_valid, message = checker.validate(
+                            constraint,
+                            None if null_value else sub_value,
+                            root=root,
+                            context=context,
+                        )
+                    if constraint.negated:
+                        is_valid = not is_valid
+                    message = message or ""
+                else:
+                    is_valid, message = checker.validate(
+                        constraint, sub_value, root=root, context=context
+                    )
             else:
                 is_valid = True
                 message = f"Precondition does not meet: {message}"

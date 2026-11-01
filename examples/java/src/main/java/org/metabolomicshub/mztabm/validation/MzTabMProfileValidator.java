@@ -22,7 +22,7 @@ public class MzTabMProfileValidator {
                 defaultId, profilesDir.resolve("mztabm-default-profile-2.1.0-M.json"));
 
         ValidationRuntimeConfiguration rt = new ValidationRuntimeConfiguration();
-        rt.setOfflineMode(true);
+        rt.setOfflineMode(false);
         rt.setSkipJsonschemaValidation(true);
 
         Path profilePath = profilesDir.resolve("mztabm-metabolights-profile-2.1.0-M.json");

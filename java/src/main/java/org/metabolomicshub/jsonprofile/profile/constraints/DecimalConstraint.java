@@ -2,8 +2,13 @@ package org.metabolomicshub.jsonprofile.profile.constraints;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class DecimalConstraint extends Constraint {
+  private static final BigInteger MAX_COEFFICIENT =
+      BigInteger.ONE.shiftLeft(96).subtract(BigInteger.ONE);
+  private static final int MAX_SCALE = 28;
+
   @JsonProperty("minimum")
   private BigDecimal minimum;
 
@@ -31,6 +36,7 @@ public class DecimalConstraint extends Constraint {
   }
 
   public void setMinimum(BigDecimal minimum) {
+    ensureSharedRange(minimum);
     this.minimum = minimum;
   }
 
@@ -39,7 +45,34 @@ public class DecimalConstraint extends Constraint {
   }
 
   public void setMaximum(BigDecimal maximum) {
+    ensureSharedRange(maximum);
     this.maximum = maximum;
+  }
+
+  public static boolean fitsSharedRange(BigDecimal value) {
+    if (value == null) {
+      return true;
+    }
+    int scale = value.scale();
+    if (scale > MAX_SCALE) {
+      return false;
+    }
+    BigInteger coefficient = value.unscaledValue().abs();
+    if (scale < 0 && coefficient.signum() != 0) {
+      long shift = -(long) scale;
+      if (coefficient.toString().length() + shift > MAX_COEFFICIENT.toString().length()) {
+        return false;
+      }
+      coefficient = coefficient.multiply(BigInteger.TEN.pow((int) shift));
+    }
+    return coefficient.compareTo(MAX_COEFFICIENT) <= 0;
+  }
+
+  private static void ensureSharedRange(BigDecimal value) {
+    if (!fitsSharedRange(value)) {
+      throw new IllegalArgumentException(
+          "decimal bounds must fit a 96-bit coefficient and scale <= 28");
+    }
   }
 
   public Boolean getAllowScientificNotation() {

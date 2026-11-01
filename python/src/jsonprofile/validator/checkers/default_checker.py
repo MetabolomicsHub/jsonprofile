@@ -19,6 +19,8 @@ from jsonprofile.profile.base import (
     ValidationRuntimeConfiguration,
 )
 from jsonprofile.profile.constraints.constraints import (
+    INT64_MAX,
+    INT64_MIN,
     BooleanConstraint,
     CollectionConstraint,
     ConstraintGroup,
@@ -40,6 +42,7 @@ from jsonprofile.profile.constraints.constraints import (
     StringConstraint,
     StringEnumConstraint,
     UriConstraint,
+    decimal_fits_shared_range,
 )
 from jsonprofile.profile.model import (
     JsonProfileConfiguration,
@@ -50,6 +53,14 @@ from jsonprofile.validator.context import JsonProfileRunContext
 from jsonprofile.validator.decorators import constraint_checker
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_int64(value: str) -> int | None:
+    try:
+        parsed = int(value)
+    except (ValueError, TypeError, OverflowError):
+        return None
+    return parsed if INT64_MIN <= parsed <= INT64_MAX else None
 
 
 def _extract_cv_info(value: Any, mapping: CvTermFieldMapping) -> CvTerm:
@@ -95,16 +106,23 @@ class NotNullConstraintChecker(ConstraintChecker):
     ) -> Tuple[bool, Optional[str]]:
         evaluation = False
         messages = []
+        is_exceptional = bool(
+            constraint.exceptional_values and value in constraint.exceptional_values
+        )
         if value is not None and constraint.null_values:
             str_val = str(value) if constraint.case_sensitive else str(value).lower()
             if str_val in constraint.null_values:
                 messages.append("value is in null value list")
                 value = None
         message = ""
-        if value is not None:
+        if is_exceptional:
+            evaluation = True
+            message = "value is in exceptional list"
+        elif value is not None:
             evaluation = True
             message = f"{value} is not null"
-        message = ". ".join(messages)
+        elif messages:
+            message = ". ".join(messages)
 
         if constraint.negated:
             evaluation = not evaluation
@@ -275,7 +293,9 @@ class CollectionConstraintChecker(ConstraintChecker):
             message = "value is not defined"
         elif not isinstance(collection_values, list):
             message = f"{constraint.json_path} is not a collection."
-            return False, message
+            if constraint.negated:
+                return True, self.format_message(constraint, message)
+            return False, self.format_message(constraint, message)
         else:
             val = collection_values
             if constraint.exceptional_values and (
@@ -526,10 +546,7 @@ class IntegerEnumConstraintChecker(ConstraintChecker):
             ):
                 evaluation = True
             else:
-                try:
-                    int_val = int(val)
-                except:  # noqa: E722
-                    int_val = None
+                int_val = _parse_int64(val)
                 if int_val is not None:
                     if int_val in constraint.options:
                         evaluation = True
@@ -575,10 +592,7 @@ class IntegerConstraintChecker(ConstraintChecker):
                 min_req = True
                 max_req = True
             else:
-                try:
-                    int_val = int(val)
-                except:  # noqa: E722
-                    int_val = None
+                int_val = _parse_int64(val)
                 if int_val is not None:
                     min_req = (
                         True
@@ -724,13 +738,18 @@ class DecimalConstraintChecker(ConstraintChecker):
                     pass
                 if decimal_val is not None:
                     if decimal_val.is_finite():
-                        if (
-                            not constraint.allow_scientific_notation
+                        if not decimal_fits_shared_range(decimal_val):
+                            message = (
+                                "value is outside the shared decimal range "
+                                "(96-bit coefficient, scale <= 28)"
+                            )
+                        elif (
+                            constraint.allow_scientific_notation is False
                             and "e" in val.lower()
                         ):
                             message = "scientific notation is not allowed"
                         else:
-                            scale = -decimal_val.as_tuple().exponent
+                            scale = max(0, -decimal_val.as_tuple().exponent)
                             min_scale_req = (
                                 True
                                 if constraint.min_scale is None
@@ -1057,6 +1076,13 @@ class CVListConstraintChecker(ConstraintChecker):
                                 message = (
                                     f"'{param}' term is in exception cv term list."
                                 )
+                        if (
+                            not name_req
+                            and constraint.exceptional_cv_list
+                            and param.cv_label in constraint.exceptional_cv_list
+                        ):
+                            name_req = True
+                            message = "CV source is in exception list"
                         if not name_req:
                             if constraint.allowed_cv_list:
                                 if param.cv_label.upper() in [
@@ -1074,9 +1100,7 @@ class CVListConstraintChecker(ConstraintChecker):
                                                 else False,
                                             )
                                         )
-                                        return verified, self.format_message(
-                                            constraint, message
-                                        )
+                                        name_req = verified
                                 else:
                                     message = (
                                         f"'{param}' not in the selected cv list: "
@@ -1093,9 +1117,7 @@ class CVListConstraintChecker(ConstraintChecker):
                                         if constraint.allow_synonym
                                         else False,
                                     )
-                                    return verified, self.format_message(
-                                        constraint, message
-                                    )
+                                    name_req = verified
 
                 else:
                     message = "invalid cv term name."
@@ -1234,40 +1256,34 @@ class ParentCVTermConstraintChecker(ConstraintChecker):
                             if param in constraint.exceptional_values:
                                 name_req = True
                                 message = "cv term is in exception list."
+                        if (
+                            not name_req
+                            and constraint.exceptional_cv_list
+                            and param.cv_label in constraint.exceptional_cv_list
+                        ):
+                            name_req = True
+                            message = "CV source is in exception list"
                         if not name_req:
                             if runtime_config and runtime_config.offline_mode:
                                 name_req = True
                                 message = "offline mode."
-                            else:
-                                verified_parent = None
-                                for parent in constraint.parent_cv_terms or []:
+                            elif constraint.parent_cv_terms:
+                                for parent in constraint.parent_cv_terms:
                                     verified, message = cv_term_search.check_cv_term(
                                         cv_term=param,
                                         parent_cv_term=parent,
-                                        allow_synonym_search=True
-                                        if constraint.allow_synonym
-                                        else False,
+                                        allow_synonym_search=bool(
+                                            constraint.allow_synonym
+                                        ),
                                     )
                                     if verified:
-                                        verified_parent = parent
+                                        name_req = True
+                                        message = (
+                                            f"CV term {param} is parent of {parent}."
+                                        )
                                         break
-                                if verified_parent:
-                                    name_req = True
-                                    message = (
-                                        f"CV term {param} is "
-                                        f"parent of {verified_parent}."
-                                    )
-                                else:
+                                if not name_req:
                                     message = "term in not child of the parent."
-
-                            if constraint.parent_cv_terms:
-                                input_val = BaseCvTerm.model_validate(
-                                    param, from_attributes=True
-                                )
-                                if input_val in (constraint.exceptional_values or []):
-                                    name_req = True
-                                else:
-                                    message = "not child of the parent."
                             else:
                                 name_req = True
                                 message = "not child of the parent."

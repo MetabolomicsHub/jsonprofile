@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 _T = TypeVar("T")
 
 
+class _OlsSearchFailure(RuntimeError):
+    """An unsuccessful OLS response that must not be kept in the result cache."""
+
+
 class _OlsSearchModel(JsonProfileBaseModel, Generic[_T]):
     page: int
     num_elements: int
@@ -53,18 +57,17 @@ class _ChildrenSearchModel(JsonProfileBaseModel):
 def _search_ols(
     url: str, params: dict, headers: dict, timeout: int = 10
 ) -> tuple[int, dict[str, Any]]:
-    try:
-        result = httpx2.get(url, params=params, headers=headers, timeout=timeout)
-        if result.status_code in {200, 201}:
-            return result.status_code, result.json()
-    except Exception as ex:
-        return 500, {"error": str(ex)}
+    result = httpx2.get(url, params=params, headers=headers, timeout=timeout)
+    if result.status_code in {200, 201}:
+        return result.status_code, result.json()
+    if result.status_code == 404:
+        return result.status_code, {}
     logger.warning(
         "Could not find CV term: %s %s",
         result.status_code,
         orjson.dumps(params, orjson.OPT_SORT_KEYS),
     )
-    return result.status_code, {}
+    raise _OlsSearchFailure(f"OLS returned HTTP {result.status_code} for {url}")
 
 
 class OlsCvTermSearch(CvTermSearch):

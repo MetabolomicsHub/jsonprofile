@@ -89,6 +89,52 @@ class ProfileStrictnessTest {
     return validator.validateDict(Map.of("term", term), runtime);
   }
 
+  private static JsonValidationResult validateCvList(
+      Map<String, Object> term, boolean searchValid, boolean negated) {
+    Map<String, Object> constraint =
+        Map.of(
+            "type",
+            "allowed-cv-list",
+            "allowed_cv_list",
+            List.of("MS"),
+            "is_cv_term_value_required",
+            true,
+            "negated",
+            negated);
+    JsonValidator validator =
+        new JsonValidator(
+            null,
+            profile(Map.of("code", "CV-LIST-TEST", "value_constraint", constraint)),
+            Map.of(),
+            new FixedCvTermSearch(searchValid),
+            null);
+    ValidationRuntimeConfiguration runtime = new ValidationRuntimeConfiguration();
+    runtime.setOfflineMode(false);
+    return validator.validateDict(Map.of("term", term), runtime);
+  }
+
+  private static JsonValidationResult validateParentCvTerm(
+      Map<String, Object> term, boolean searchValid, boolean negated) {
+    Map<String, Object> constraint =
+        Map.of(
+            "type",
+            "parent-cv-term",
+            "parent_cv_terms",
+            List.of(Map.of("cv_label", "MS", "cv_accession", "MS:ROOT", "name", "root")),
+            "negated",
+            negated);
+    JsonValidator validator =
+        new JsonValidator(
+            null,
+            profile(Map.of("code", "CV-PARENT-TEST", "value_constraint", constraint)),
+            Map.of(),
+            new FixedCvTermSearch(searchValid),
+            null);
+    ValidationRuntimeConfiguration runtime = new ValidationRuntimeConfiguration();
+    runtime.setOfflineMode(false);
+    return validator.validateDict(Map.of("term", term), runtime);
+  }
+
   private static Map<String, Object> cvTerm(String source, String value) {
     return Map.of(
         "cv_label", source, "cv_accession", source + ":1", "name", "term", "value", value);
@@ -105,6 +151,21 @@ class ProfileStrictnessTest {
   void exceptionalSourceAppliesRequiredValueAndNegation() {
     assertTrue(validateCvTerm(cvTerm("EX", ""), true, false).getErrors().containsKey("$.term"));
     assertTrue(validateCvTerm(cvTerm("EX", ""), true, true).getErrors().isEmpty());
+  }
+
+  @Test
+  void onlineCvListLookupAppliesRequiredValueAndNegation() {
+    assertTrue(validateCvList(cvTerm("MS", ""), true, false).getErrors().containsKey("$.term"));
+    assertTrue(validateCvList(cvTerm("MS", "x"), true, true).getErrors().containsKey("$.term"));
+    assertTrue(validateCvList(cvTerm("MS", "x"), false, true).getErrors().isEmpty());
+  }
+
+  @Test
+  void onlineParentCvLookupResultIsPreserved() {
+    assertTrue(validateParentCvTerm(cvTerm("MS", "x"), true, false).getErrors().isEmpty());
+    assertTrue(
+        validateParentCvTerm(cvTerm("MS", "x"), false, false).getErrors().containsKey("$.term"));
+    assertTrue(validateParentCvTerm(cvTerm("MS", "x"), false, true).getErrors().isEmpty());
   }
 
   @Test

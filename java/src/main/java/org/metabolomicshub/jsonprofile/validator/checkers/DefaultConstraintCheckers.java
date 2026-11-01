@@ -127,7 +127,11 @@ public final class DefaultConstraintCheckers {
         messages.add("value is in null value list");
         val = null;
       }
-      boolean evaluation = val != null;
+      boolean evaluation =
+          inExceptionalValues(constraint, value, value == null ? null : value.toString());
+      if (!evaluation) {
+        evaluation = val != null;
+      }
       String message = String.join(". ", messages);
       if (constraint.isNegated()) {
         evaluation = !evaluation;
@@ -263,7 +267,8 @@ public final class DefaultConstraintCheckers {
         message = "value is not defined";
       } else if (!(val instanceof List<?>)
           && !(val instanceof Map<?, ?> && constraint.getItemValueMatchConstraint() != null)) {
-        return new CheckResult(false, constraint.getJsonPath() + " is not a collection.");
+        return new CheckResult(
+            constraint.isNegated(), constraint.getJsonPath() + " is not a collection.");
       } else if (inExceptionalValues(constraint, val, val.toString())) {
         minReq = true;
         maxReq = true;
@@ -432,7 +437,7 @@ public final class DefaultConstraintCheckers {
           message = "";
         } else {
           try {
-            int intVal = Integer.parseInt(strVal);
+            long intVal = Long.parseLong(strVal);
             if (constraint.getOptions() != null && constraint.getOptions().containsKey(intVal)) {
               evaluation = true;
               message = "value " + strVal + " is in the int enum list";
@@ -597,7 +602,10 @@ public final class DefaultConstraintCheckers {
         } else {
           try {
             BigDecimal dec = new BigDecimal(strVal);
-            if (!constraint.isAllowScientificNotation()
+            if (!DecimalConstraint.fitsSharedRange(dec)) {
+              message =
+                  "value is outside the shared decimal range (96-bit coefficient, scale <= 28)";
+            } else if (!constraint.isAllowScientificNotation()
                 && strVal.toLowerCase(Locale.ROOT).contains("e")) {
               message = "scientific notation is not allowed";
             } else {
@@ -950,6 +958,12 @@ public final class DefaultConstraintCheckers {
               nameReq = true;
               message = "'" + param + "' term is in exception cv term list.";
             }
+            if (!nameReq
+                && constraint.getExceptionalCvList() != null
+                && constraint.getExceptionalCvList().contains(param.getCvLabel())) {
+              nameReq = true;
+              message = "CV source is in exception list";
+            }
             if (!nameReq) {
               if (constraint.getAllowedCvList() != null
                   && !constraint.getAllowedCvList().isEmpty()) {
@@ -965,7 +979,8 @@ public final class DefaultConstraintCheckers {
                         context
                             .getCvTermSearch()
                             .checkCvTerm(param, null, constraint.isAllowSynonym());
-                    return new CheckResult(res.valid(), formatMessage(constraint, res.message()));
+                    nameReq = res.valid();
+                    message = res.message();
                   }
                 } else {
                   message =
@@ -980,7 +995,8 @@ public final class DefaultConstraintCheckers {
               } else {
                 CvTermSearch.CheckResult res =
                     context.getCvTermSearch().checkCvTerm(param, null, constraint.isAllowSynonym());
-                return new CheckResult(res.valid(), formatMessage(constraint, res.message()));
+                nameReq = res.valid();
+                message = res.message();
               }
             }
           }
@@ -1137,6 +1153,12 @@ public final class DefaultConstraintCheckers {
             if (inExceptionalValues(constraint, baseParam, baseParam.toString())) {
               nameReq = true;
               message = "cv term is in exception list.";
+            }
+            if (!nameReq
+                && constraint.getExceptionalCvList() != null
+                && constraint.getExceptionalCvList().contains(param.getCvLabel())) {
+              nameReq = true;
+              message = "CV source is in exception list";
             }
             if (!nameReq) {
               if (context.getRuntimeConfig().isOfflineMode()) {
