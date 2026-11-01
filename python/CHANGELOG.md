@@ -1,3 +1,9 @@
+## v0.2.0 (2026-11-01)
+
+### Feat
+
+- java and rust implementations
+
 ## v0.1.1 (2026-10-27)
 
 ### Fix
