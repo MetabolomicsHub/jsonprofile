@@ -35,6 +35,7 @@ class JsonProfileBaseModel(BaseModel):
     """Base model configuration shared by JSON Profile schemas."""
 
     model_config = ConfigDict(
+        extra="forbid",
         populate_by_name=True,
         str_strip_whitespace=True,
         validate_default=True,

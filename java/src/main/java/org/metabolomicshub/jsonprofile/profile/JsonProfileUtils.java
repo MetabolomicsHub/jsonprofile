@@ -1,5 +1,6 @@
 package org.metabolomicshub.jsonprofile.profile;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -10,6 +11,8 @@ import java.util.regex.Pattern;
 public final class JsonProfileUtils {
   private static final ObjectMapper MAPPER =
       new ObjectMapper().registerModule(new JavaTimeModule());
+  private static final ObjectMapper PROFILE_MAPPER =
+      MAPPER.copy().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
   private static final Pattern WHITESPACE_CONTROL = Pattern.compile("[\\t\\n\\r]");
   private static final Pattern OTHER_CONTROL =
       Pattern.compile("[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f]");
@@ -20,6 +23,10 @@ public final class JsonProfileUtils {
 
   public static ObjectMapper mapper() {
     return MAPPER;
+  }
+
+  public static ObjectMapper profileMapper() {
+    return PROFILE_MAPPER;
   }
 
   public static String sanitizeStr(Object val) {

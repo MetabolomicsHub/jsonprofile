@@ -1,6 +1,5 @@
 package org.metabolomicshub.jsonprofile.profile;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -11,8 +10,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(using = CvTerm.Deserializer.class)
 public class CvTerm {
@@ -164,6 +163,14 @@ public class CvTerm {
         return parseBracketed(node.asText());
       }
       if (node.isObject()) {
+        var fields = node.fieldNames();
+        while (fields.hasNext()) {
+          String field = fields.next();
+          if (!Set.of("cv_label", "cv_accession", "name", "value").contains(field)) {
+            throw ctxt.weirdStringException(
+                field, CvTerm.class, "Unrecognized CV term property: " + field);
+          }
+        }
         String label = node.hasNonNull("cv_label") ? node.get("cv_label").asText("") : "";
         String accession =
             node.hasNonNull("cv_accession") ? node.get("cv_accession").asText("") : "";

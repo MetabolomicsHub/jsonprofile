@@ -847,7 +847,17 @@ public final class DefaultConstraintCheckers {
         message = "Value '" + val + "' could not be parsed as a CV term.";
       } else if (constraint.getExceptionalCvList() != null
           && constraint.getExceptionalCvList().contains(param.getCvLabel())) {
-        return new CheckResult(true, formatMessage(constraint, "CV source is in exception list"));
+        message = "CV source is in exception list";
+        List<String> msgs = new ArrayList<>();
+        msgs.add(message);
+        boolean valReq =
+            !constraint.isCvTermValueRequired()
+                || (param.getValue() != null && !param.getValue().isEmpty());
+        if (constraint.isCvTermValueRequired()) {
+          msgs.add(valReq ? "Value of CV term is defined." : "Value slot for CV term is required.");
+        }
+        evaluation = valReq;
+        message = String.join(". ", msgs);
       } else {
         boolean nameReq = false;
         boolean isUserDefined =
@@ -870,7 +880,8 @@ public final class DefaultConstraintCheckers {
           } else {
             CvTermSearch.CheckResult res =
                 context.getCvTermSearch().checkCvTerm(param, null, constraint.isAllowSynonym());
-            return new CheckResult(res.valid(), formatMessage(constraint, res.message()));
+            nameReq = res.valid();
+            message = res.message();
           }
         } else {
           message = "invalid cv term name: " + param;

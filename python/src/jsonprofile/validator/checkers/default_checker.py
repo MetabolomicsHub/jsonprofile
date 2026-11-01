@@ -966,40 +966,34 @@ class CVTermConstraintChecker(ConstraintChecker):
                     and param.cv_label in constraint.exceptional_cv_list
                 ):
                     message = "CV source is in exception list"
-                    return True, self.format_message(constraint, message)
-                is_user_defined = (
-                    not param.cv_label
-                    and not param.cv_accession
-                    and param.name
-                    and len(param.name) > 0
-                )
-                if is_user_defined:
-                    if constraint.allow_user_defined_terms:
-                        name_req = True
-                        message = "User-defined terms is allowed."
-                    else:
-                        message = "User-defined terms is not allowed."
+                    name_req = True
                 else:
-                    if param.name:
-                        if not param.cv_label or not param.cv_accession:
-                            message = f"invalid cv term label or accession. {param}"
+                    is_user_defined = (
+                        not param.cv_label
+                        and not param.cv_accession
+                        and param.name
+                        and len(param.name) > 0
+                    )
+                    if is_user_defined:
+                        if constraint.allow_user_defined_terms:
+                            name_req = True
+                            message = "User-defined terms is allowed."
                         else:
-                            if runtime_config and runtime_config.offline_mode:
+                            message = "User-defined terms is not allowed."
+                    else:
+                        if param.name:
+                            if not param.cv_label or not param.cv_accession:
+                                message = f"invalid cv term label or accession. {param}"
+                            elif runtime_config and runtime_config.offline_mode:
                                 name_req = True
                                 message = "term is valid."
                             else:
-                                verified, message = cv_term_search.check_cv_term(
+                                name_req, message = cv_term_search.check_cv_term(
                                     param,
-                                    allow_synonym_search=True
-                                    if constraint.allow_synonym
-                                    else False,
+                                    allow_synonym_search=bool(constraint.allow_synonym),
                                 )
-                                return verified, self.format_message(
-                                    constraint, message
-                                )
-
-                    else:
-                        message = f"invalid cv term name: {param}"
+                        else:
+                            message = f"invalid cv term name: {param}"
 
                 messages = [message] if message else []
 

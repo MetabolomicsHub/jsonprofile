@@ -213,13 +213,11 @@ class ConstraintChecker(abc.ABC):
             return ConstraintValidationResult(
                 is_valid=is_valid,
                 message=message,
-                constraint_name=getattr(constraint, "name", "unknown"),
             )
 
         return ConstraintValidationResult(
             is_valid=False,
             message=f"Unknown constraint type: {type(constraint)}",
-            constraint_name=getattr(constraint, "name", "unknown"),
         )
 
     def get_json_path_value(

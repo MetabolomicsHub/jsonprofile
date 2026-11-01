@@ -164,13 +164,14 @@ public class JsonValidator {
         if (!Files.exists(path)) {
           throw new IllegalArgumentException("Json profile (" + path + ") file does not exist.");
         }
-        targetProfile = JsonProfileUtils.mapper().readValue(path.toFile(), JsonProfile.class);
+        targetProfile =
+            JsonProfileUtils.profileMapper().readValue(path.toFile(), JsonProfile.class);
       } else if (profile instanceof JsonProfile jp) {
         targetProfile = jp;
       } else if (profile instanceof JsonNode node) {
-        targetProfile = JsonProfileUtils.mapper().treeToValue(node, JsonProfile.class);
+        targetProfile = JsonProfileUtils.profileMapper().treeToValue(node, JsonProfile.class);
       } else if (profile instanceof Map<?, ?> map) {
-        targetProfile = JsonProfileUtils.mapper().convertValue(map, JsonProfile.class);
+        targetProfile = JsonProfileUtils.profileMapper().convertValue(map, JsonProfile.class);
       }
     } catch (IOException ex) {
       throw new IllegalArgumentException("Json profile load failure: " + ex.getMessage(), ex);

@@ -5,6 +5,30 @@ use serde_json::Value;
 use serde_json_path::JsonPath;
 use std::collections::HashSet;
 use std::path::Path;
+use std::sync::OnceLock;
+
+const PROFILE_SCHEMA: &str = include_str!("../../resources/jsonprofile.schema.json");
+
+fn profile_schema_validator() -> &'static jsonschema::Validator {
+    static VALIDATOR: OnceLock<jsonschema::Validator> = OnceLock::new();
+    VALIDATOR.get_or_init(|| {
+        let schema: Value =
+            serde_json::from_str(PROFILE_SCHEMA).expect("embedded JsonProfile schema is valid");
+        jsonschema::validator_for(&schema).expect("embedded JsonProfile schema compiles")
+    })
+}
+
+pub fn validate_profile_schema(value: &Value) -> Result<(), String> {
+    let errors: Vec<String> = profile_schema_validator()
+        .iter_errors(value)
+        .map(|error| error.to_string())
+        .collect();
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors.join("; "))
+    }
+}
 
 pub fn validate_profile_file(file_path: impl AsRef<Path>) -> (bool, Vec<JsonProfileMessage>) {
     let path = file_path.as_ref();
@@ -57,6 +81,19 @@ pub fn validate_profile_file(file_path: impl AsRef<Path>) -> (bool, Vec<JsonProf
 }
 
 pub fn validate_profile_value(value: &Value) -> (bool, Vec<JsonProfileMessage>) {
+    if let Err(error) = validate_profile_schema(value) {
+        return (
+            false,
+            vec![JsonProfileMessage::new(
+                "",
+                None,
+                Category::CrossCheck,
+                None,
+                format!("Profile json file format is not valid: {error}"),
+                EnforcementLevel::Required,
+            )],
+        );
+    }
     let profile: JsonProfile = match serde_json::from_value(value.clone()) {
         Ok(p) => p,
         Err(e) => {

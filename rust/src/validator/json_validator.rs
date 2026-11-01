@@ -7,7 +7,7 @@ use crate::profile::model::{
     FieldRequirement, FieldRequirementGroup, JsonProfile, JsonProfileConfiguration,
     OpaFieldRequirement, RequirementDefinition,
 };
-use crate::profile::profile_validator::validate_profile;
+use crate::profile::profile_validator::{validate_profile, validate_profile_schema};
 use crate::validator::checker::validate_constraint;
 use crate::validator::context::{JsonProfileRunContext, JsonValidationResult, MessageCollector};
 use crate::validator::cv_term_search::{CvTermSearch, OlsCvTermSearch};
@@ -181,11 +181,19 @@ impl JsonValidator {
                 }
                 let content = fs::read_to_string(&p)
                     .map_err(|e| format!("Failed to read profile file: {e}"))?;
-                serde_json::from_str(&content)
+                let value: Value = serde_json::from_str(&content)
+                    .map_err(|e| format!("Failed to parse profile JSON: {e}"))?;
+                validate_profile_schema(&value)
+                    .map_err(|e| format!("Profile JSON does not match JsonProfile schema: {e}"))?;
+                serde_json::from_value(value)
                     .map_err(|e| format!("Failed to parse profile JSON: {e}"))?
             }
-            ProfileSource::Json(v) => serde_json::from_value(v)
-                .map_err(|e| format!("Failed to deserialize JsonProfile: {e}"))?,
+            ProfileSource::Json(v) => {
+                validate_profile_schema(&v)
+                    .map_err(|e| format!("Profile JSON does not match JsonProfile schema: {e}"))?;
+                serde_json::from_value(v)
+                    .map_err(|e| format!("Failed to deserialize JsonProfile: {e}"))?
+            }
             ProfileSource::Model(m) => m,
         };
 

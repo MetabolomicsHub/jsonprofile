@@ -1,6 +1,5 @@
 package org.metabolomicshub.jsonprofile.profile;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -15,8 +14,7 @@ import org.metabolomicshub.jsonprofile.profile.constraints.Constraint;
 import org.metabolomicshub.jsonprofile.profile.constraints.Evaluation;
 
 public final class ProfileValidatorUtil {
-  private static final ObjectMapper STRICT_MAPPER =
-      JsonProfileUtils.mapper().copy().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+  private static final ObjectMapper STRICT_MAPPER = JsonProfileUtils.profileMapper();
 
   private ProfileValidatorUtil() {}
 

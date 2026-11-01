@@ -26,3 +26,18 @@ if __name__ == "__main__":
     )
     if shared_schema_path.parent.exists():
         shared_schema_path.write_bytes(schema_bytes)
+
+    for language_schema_path in (
+        shared_schema_path.parents[2]
+        / "java"
+        / "src"
+        / "main"
+        / "resources"
+        / "jsonprofile.schema.json",
+        shared_schema_path.parents[2]
+        / "rust"
+        / "resources"
+        / "jsonprofile.schema.json",
+    ):
+        language_schema_path.parent.mkdir(parents=True, exist_ok=True)
+        language_schema_path.write_bytes(schema_bytes)

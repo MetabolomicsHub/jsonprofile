@@ -125,7 +125,7 @@ class JsonValidator:
         logger.debug("Json schema will be loaded.")
         self.json_schema = None
         self.schema_validator = None
-        if json_schema:
+        if json_schema is not None:
             self.json_schema = self.load_jsonschema(json_schema)
             self.validate_jsonschema(self.json_schema)
             logger.debug("Json schema validated.")

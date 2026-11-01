@@ -1,6 +1,7 @@
 {
   "$defs": {
     "BaseCvTerm": {
+      "additionalProperties": false,
       "description": "A lightweight reference to a controlled vocabulary (CV) term.\n\nUsed within constraint definitions to identify specific CV terms\nby their label, accession, or human-readable name.",
       "properties": {
         "cv_label": {
@@ -47,6 +48,7 @@
       "type": "object"
     },
     "BooleanConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is boolean.",
       "properties": {
         "validator": {
@@ -260,6 +262,7 @@
       "type": "object"
     },
     "CVListConstraint": {
+      "additionalProperties": false,
       "description": "Restricts CV terms to those from specific controlled vocabularies.\n\nThe ``allowed_cv_list`` field specifies which CV namespace labels are\nallowed (e.g. ``['MS', 'UO']``).",
       "properties": {
         "validator": {
@@ -496,6 +499,7 @@
       "type": "object"
     },
     "CVTermConstraint": {
+      "additionalProperties": false,
       "description": "Base constraint for values that must be controlled vocabulary terms.\n\nSubclasses refine which CV terms are acceptable (by list, by parent\nterm, or by CV namespace). This class captures the common options\nshared across all CV term constraints.",
       "properties": {
         "validator": {
@@ -715,6 +719,7 @@
       "type": "object"
     },
     "CVTermEnumConstraint": {
+      "additionalProperties": false,
       "description": "Restricts the value to a specific set of CV terms.\n\nUnlike ``CVListConstraint`` which filters by CV namespace, this\nconstraint enumerates the exact terms that are acceptable.",
       "properties": {
         "validator": {
@@ -946,6 +951,7 @@
       "type": "object"
     },
     "CVTermValueConstraint": {
+      "additionalProperties": false,
       "description": "Validates the value slot of a specific CV term.\n\nWhen a field contains a CV term matching ``key_cv_term``, its\nvalue is validated against the nested ``value_constraint``.\nThis enables context-dependent validation (e.g. a numeric range\nthat only applies when a specific CV term is used).",
       "properties": {
         "validator": {
@@ -1209,6 +1215,7 @@
       "type": "object"
     },
     "CollectionConstraint": {
+      "additionalProperties": false,
       "description": "Validates collection size and item matches against reference values.",
       "properties": {
         "validator": {
@@ -1591,6 +1598,7 @@
       "type": "object"
     },
     "ConstraintGroup": {
+      "additionalProperties": false,
       "description": "Combines multiple constraints using boolean or valid-count logic.",
       "properties": {
         "validator": {
@@ -1875,6 +1883,7 @@
       "type": "object"
     },
     "CustomConstraint": {
+      "additionalProperties": false,
       "description": "Runs a named custom constraint checker.",
       "properties": {
         "validator": {
@@ -2083,6 +2092,7 @@
       "type": "object"
     },
     "CvTerm": {
+      "additionalProperties": false,
       "description": "Controlled vocabulary term with an optional user-provided value.",
       "properties": {
         "cv_label": {
@@ -2142,6 +2152,7 @@
       "type": "object"
     },
     "CvTermFieldMapping": {
+      "additionalProperties": false,
       "properties": {
         "label_field": {
           "anyOf": [
@@ -2196,6 +2207,7 @@
       "type": "object"
     },
     "DateTimeConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a string value represents a valid date, time,\nor datetime.\n\nWhen ``format`` is provided, the value must match that specific\npattern (e.g. ISO-8601). When omitted, ISO-8601 is accepted.",
       "properties": {
         "validator": {
@@ -2376,6 +2388,7 @@
       "type": "object"
     },
     "DecimalConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is a valid floating-point number.\n\nSupports optional range bounds, scientific notation control,\nand decimal precision limits.",
       "properties": {
         "validator": {
@@ -2629,6 +2642,7 @@
       "type": "object"
     },
     "EmailConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a string value is a well-formed email address.",
       "properties": {
         "validator": {
@@ -2820,6 +2834,7 @@
       "type": "string"
     },
     "Evaluation": {
+      "additionalProperties": false,
       "description": "Evaluates a constraint against either the current value or another JSONPath.",
       "properties": {
         "root_value_evaluation": {
@@ -3005,6 +3020,7 @@
       "type": "object"
     },
     "ExtendedCvTerm": {
+      "additionalProperties": false,
       "description": "Controlled vocabulary term whose value may be another CV term.",
       "properties": {
         "cv_label": {
@@ -3067,6 +3083,7 @@
       "type": "object"
     },
     "FieldRequirement": {
+      "additionalProperties": false,
       "description": "Validation rules that apply to one profiled JSON field.",
       "properties": {
         "code": {
@@ -3239,6 +3256,7 @@
       "type": "object"
     },
     "FieldRequirementGroup": {
+      "additionalProperties": false,
       "description": "Group of requirements combined by valid-count bounds.",
       "properties": {
         "code": {
@@ -3334,6 +3352,7 @@
       "type": "object"
     },
     "IntegerConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is a valid integer within an optional range.\n\nUse ``PositiveIntegerConstraint`` or ``NonNegativeIntegerConstraint``\nfor common presets.",
       "properties": {
         "validator": {
@@ -3527,6 +3546,7 @@
       "type": "object"
     },
     "IntegerEnumConstraint": {
+      "additionalProperties": false,
       "description": "Validates that an integer value is one of a fixed set of allowed options.\n\nEach option maps an integer value to a display value, integer code,\nor ``ExtendedCvTerm`` metadata.",
       "properties": {
         "validator": {
@@ -3715,6 +3735,7 @@
       "type": "object"
     },
     "JsonProfileConfiguration": {
+      "additionalProperties": false,
       "description": "Optional configuration shared by validators for a profile.",
       "properties": {
         "cv_term_field_mapping": {
@@ -3866,6 +3887,7 @@
       "type": "object"
     },
     "NonNegativeIntegerConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is a non-negative integer (>= 0).\n\nConvenience subclass of ``IntegerConstraint`` with ``minimum=0``.",
       "properties": {
         "validator": {
@@ -4059,6 +4081,7 @@
       "type": "object"
     },
     "NotNullConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is not null or one of the configured null values.",
       "properties": {
         "validator": {
@@ -4239,6 +4262,7 @@
       "type": "object"
     },
     "OpaFieldRequirement": {
+      "additionalProperties": false,
       "description": "Requirement will be evaluated and messages are produced by OPA engine",
       "properties": {
         "code": {
@@ -4306,6 +4330,7 @@
       "type": "object"
     },
     "OpaPolicyConstraint": {
+      "additionalProperties": false,
       "description": "Evaluates an Open Policy Agent policy against the input value.",
       "properties": {
         "validator": {
@@ -4494,6 +4519,7 @@
       "type": "object"
     },
     "ParentCVTermConstraint": {
+      "additionalProperties": false,
       "description": "Restricts the value to CV terms that are descendants of\nspecified parent terms in the ontology hierarchy.\n\nSupports exclusion of specific terms or name patterns to\nfilter out unwanted branches of the ontology tree.",
       "properties": {
         "validator": {
@@ -4746,6 +4772,7 @@
       "type": "object"
     },
     "PositiveIntegerConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a value is a positive integer (>= 1).\n\nConvenience subclass of ``IntegerConstraint`` with ``minimum=1``.",
       "properties": {
         "validator": {
@@ -4939,6 +4966,7 @@
       "type": "object"
     },
     "Precondition": {
+      "additionalProperties": false,
       "description": "Condition that controls whether a constraint should be evaluated.",
       "properties": {
         "evaluations": {
@@ -4995,6 +5023,7 @@
       "type": "object"
     },
     "ProfileValidatorDefinition": {
+      "additionalProperties": false,
       "description": "Definition of a profile validator implementation.",
       "properties": {
         "label": {
@@ -5038,6 +5067,7 @@
       "type": "object"
     },
     "RegexConstraint": {
+      "additionalProperties": false,
       "description": "Validates a string value against a regular expression pattern.\n\nUse for structured identifiers or format patterns that can be\nexpressed as a single regex (e.g. ORCID, adduct ion notation).",
       "properties": {
         "validator": {
@@ -5227,6 +5257,7 @@
       "type": "object"
     },
     "StringConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a string value's length falls within a range.\n\nAt least one of ``minimum`` or ``maximum`` should be set.",
       "properties": {
         "validator": {
@@ -5422,6 +5453,7 @@
       "type": "object"
     },
     "StringEnumConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a string value is one of a fixed set of allowed options.\n\nOptions may be a simple list of strings or a mapping from a string key\nto a display value, integer code, or ``ExtendedCvTerm`` metadata.",
       "properties": {
         "validator": {
@@ -5620,6 +5652,7 @@
       "type": "object"
     },
     "UriConstraint": {
+      "additionalProperties": false,
       "description": "Validates that a string value is a well-formed URI.\n\nOptionally restricts accepted URI schemes (e.g. only ``https``,\n``ftp``).",
       "properties": {
         "validator": {
@@ -5803,6 +5836,7 @@
       "type": "object"
     },
     "WasmFileDefinition": {
+      "additionalProperties": false,
       "description": "Configuration for an Open Policy Agent policy module.",
       "properties": {
         "wasm_file_download_url": {
@@ -5830,6 +5864,7 @@
       "type": "object"
     }
   },
+  "additionalProperties": false,
   "description": "A JSON profile containing metadata, configuration, and field requirements.",
   "properties": {
     "id": {

@@ -927,20 +927,18 @@ impl ConstraintChecker for CvTermChecker {
                     "Value '{}' could not be parsed as a CV term.",
                     display_val(value)
                 )
-            } else if exceptional_cv_list
-                .as_ref()
-                .is_some_and(|list| list.contains(&param.cv_label))
-            {
-                return (
-                    true,
-                    Some(format_message(constraint, "CV source is in exception list")),
-                );
             } else {
                 let mut name_req = false;
-                let is_user_defined = param.cv_label.is_empty()
+                let msg = if exceptional_cv_list
+                    .as_ref()
+                    .is_some_and(|list| list.contains(&param.cv_label))
+                {
+                    name_req = true;
+                    "CV source is in exception list".to_string()
+                } else if param.cv_label.is_empty()
                     && param.cv_accession.is_empty()
-                    && !param.name.is_empty();
-                let msg = if is_user_defined {
+                    && !param.name.is_empty()
+                {
                     if allow_user_defined_terms.unwrap_or(false) {
                         name_req = true;
                         "User-defined terms is allowed.".to_string()
@@ -954,12 +952,13 @@ impl ConstraintChecker for CvTermChecker {
                         name_req = true;
                         "term is valid.".to_string()
                     } else {
-                        let (ok, m) = context.cv_term_search.check_cv_term(
+                        let (ok, message) = context.cv_term_search.check_cv_term(
                             &param,
                             None,
                             allow_synonym.unwrap_or(false),
                         );
-                        return (ok, Some(format_message(constraint, &m)));
+                        name_req = ok;
+                        message
                     }
                 } else {
                     format!("invalid cv term name: {param}")

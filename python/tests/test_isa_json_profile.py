@@ -3,7 +3,6 @@ import pathlib
 
 import orjson
 import pytest
-from scripts.profiles.isa_json.metabolights_profile import METABOLIGHTS_BASE_PROFILE
 
 from jsonprofile.profile.base import EnforcementLevel, ValidationRuntimeConfiguration
 from jsonprofile.utils import setup_basic_logging_config
@@ -36,9 +35,6 @@ def test_isa_json_profile_01(profile) -> None:
     setup_basic_logging_config()
 
     profile_path = pathlib.Path(referenced_profiles.get(profile))
-    if profile == METABOLIGHTS_PROFILE_ID:
-        schema = METABOLIGHTS_BASE_PROFILE.model_dump(by_alias=True, exclude_none=True)
-        profile_path.write_bytes(orjson.dumps(schema, option=orjson.OPT_INDENT_2))
     input_json = "../shared/resources/isa-json/metabolights-input-isa.json"
     validator = JsonValidator(
         json_schema=None,

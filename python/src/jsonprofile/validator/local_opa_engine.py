@@ -5,6 +5,7 @@ import re
 import shutil
 import tarfile
 import tempfile
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -222,6 +223,7 @@ def _builtin_time_parse_ns(*args):
 
 class LocalOpaEngine(OpaEngine):
     def __init__(self, wasm_path: str):
+        self._evaluation_lock = threading.RLock()
         try:
             self._bundle_data = None
             if tarfile.is_tarfile(wasm_path):
@@ -396,23 +398,24 @@ class LocalOpaEngine(OpaEngine):
                 bundle data loaded from data.json is restored if available.
         """
         input_data = _sanitize_json_value(input_data)
-        if data is not None:
-            self.policy.set_data(_sanitize_json_value(data))
-        elif self._bundle_data is not None:
-            self.policy.set_data(_sanitize_json_value(self._bundle_data))
-        entrypoint = self.resolve_entrypoint(entrypoint)
-        if entrypoint is None:
-            result = self.policy.evaluate(input_data)
-        else:
-            result = self.policy.evaluate(input_data, entrypoint=entrypoint)
-        # Return the raw OPA evaluation result so callers can inspect
-        # the returned list of evaluation records
-        return result[0].get("result") if result and result[0] else []
+        with self._evaluation_lock:
+            if data is not None:
+                self.policy.set_data(_sanitize_json_value(data))
+            elif self._bundle_data is not None:
+                self.policy.set_data(_sanitize_json_value(self._bundle_data))
+            entrypoint = self.resolve_entrypoint(entrypoint)
+            if entrypoint is None:
+                result = self.policy.evaluate(input_data)
+            else:
+                result = self.policy.evaluate(input_data, entrypoint=entrypoint)
+            # Return the raw OPA evaluation result for caller inspection.
+            return result[0].get("result") if result and result[0] else []
 
 
 class LocalOpaEngineFactory(OpaEngineFactory):
     def __init__(self):
         self.engines: dict[Path, OpaEngine] = {}
+        self._engines_lock = threading.RLock()
 
     def load_from_url(self, url: str, file_path: str) -> None:
         """Download a file from a URL and save it to the given file path.
@@ -441,30 +444,31 @@ class LocalOpaEngineFactory(OpaEngineFactory):
         wasm_file_path: str,
         wasm_file_download_url: Optional[str] = None,
     ):
-        if not wasm_file_path:
-            raise ValueError("Invalid WASM file path")
-        wasm_path = Path(wasm_file_path)
-        if not wasm_path.exists():
-            alt_parent = Path("..") / wasm_path
-            alt_stripped = Path(wasm_file_path.removeprefix("../"))
-            if alt_parent.exists():
-                wasm_path = alt_parent
-                wasm_file_path = str(alt_parent)
-            elif alt_stripped.exists():
-                wasm_path = alt_stripped
-                wasm_file_path = str(alt_stripped)
-        if wasm_path in self.engines:
-            return self.engines[wasm_path]
+        with self._engines_lock:
+            if not wasm_file_path:
+                raise ValueError("Invalid WASM file path")
+            wasm_path = Path(wasm_file_path)
+            if not wasm_path.exists():
+                alt_parent = Path("..") / wasm_path
+                alt_stripped = Path(wasm_file_path.removeprefix("../"))
+                if alt_parent.exists():
+                    wasm_path = alt_parent
+                    wasm_file_path = str(alt_parent)
+                elif alt_stripped.exists():
+                    wasm_path = alt_stripped
+                    wasm_file_path = str(alt_stripped)
+            if wasm_path in self.engines:
+                return self.engines[wasm_path]
 
-        if not wasm_path.exists() and not wasm_file_download_url:
-            raise ValueError(
-                "Invalid WASM file does not exists and URL is not defined. "
-                "Select a valid file path or a valid URL to download WASM file"
-            )
+            if not wasm_path.exists() and not wasm_file_download_url:
+                raise ValueError(
+                    "Invalid WASM file does not exists and URL is not defined. "
+                    "Select a valid file path or a valid URL to download WASM file"
+                )
 
-        if not wasm_path.exists():
-            self.load_from_url(wasm_file_download_url, wasm_file_path)
+            if not wasm_path.exists():
+                self.load_from_url(wasm_file_download_url, wasm_file_path)
 
-        engine = LocalOpaEngine(wasm_path=wasm_file_path)
-        self.engines[wasm_path] = engine
-        return engine
+            engine = LocalOpaEngine(wasm_path=wasm_file_path)
+            self.engines[wasm_path] = engine
+            return engine

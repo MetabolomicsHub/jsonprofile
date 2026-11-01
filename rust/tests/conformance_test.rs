@@ -1,3 +1,5 @@
+use jsonprofile::profile::profile_validator::validate_profile_value;
+use jsonprofile::CvTerm;
 use jsonprofile::{
     register_constraint_checker, register_profile_validator, validate_profile_file, Constraint,
     ConstraintChecker, DefaultProfileValidator, JsonProfileRunContext, JsonValidator, OpaEngine,
@@ -8,6 +10,154 @@ use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+
+struct FixedCvTermSearch {
+    valid: bool,
+}
+
+impl jsonprofile::CvTermSearch for FixedCvTermSearch {
+    fn get_iri(&self, _cv_term: &CvTerm) -> Option<String> {
+        None
+    }
+
+    fn get_curie(&self, _cv_term: &CvTerm) -> Option<String> {
+        None
+    }
+
+    fn find_cv_term(
+        &self,
+        _source: &str,
+        _accession_or_label: &str,
+        _matched_accession: Option<&str>,
+        _allow_synonym_search: bool,
+    ) -> Option<CvTerm> {
+        None
+    }
+
+    fn check_cv_term(
+        &self,
+        _cv_term: &CvTerm,
+        _parent_cv_term: Option<&CvTerm>,
+        _allow_synonym_search: bool,
+    ) -> (bool, String) {
+        (self.valid, "fixed test result".to_string())
+    }
+}
+
+fn cv_term_result(term: Value, valid: bool, negated: bool) -> jsonprofile::JsonValidationResult {
+    let profile = serde_json::json!({
+        "id": "https://example.org/cv-test",
+        "version": "1.0.0",
+        "name": "CV test profile",
+        "requirements": {
+            "$.term": {
+                "code": "CV-TEST",
+                "value_constraint": {
+                    "type": "cv-term",
+                    "is_cv_term_value_required": true,
+                    "exceptional_cv_list": ["EX"],
+                    "negated": negated
+                }
+            }
+        }
+    });
+    let validator = JsonValidator::with_options(
+        None,
+        ProfileSource::Json(profile),
+        HashMap::new(),
+        Some(Arc::new(FixedCvTermSearch { valid })),
+        None,
+    )
+    .expect("validator should be constructed");
+    validator.validate_dict(
+        &serde_json::json!({"term": term}),
+        Some(ValidationRuntimeConfiguration {
+            offline_mode: Some(false),
+            ..Default::default()
+        }),
+    )
+}
+
+#[test]
+fn cv_term_online_results_apply_value_requirement_and_negation() {
+    let missing_value = serde_json::json!({
+        "cv_label": "MS", "cv_accession": "MS:1", "name": "term", "value": ""
+    });
+    let valid_value = serde_json::json!({
+        "cv_label": "MS", "cv_accession": "MS:1", "name": "term", "value": "x"
+    });
+
+    assert!(cv_term_result(missing_value.clone(), true, false)
+        .errors
+        .contains_key("$.term"));
+    assert!(cv_term_result(valid_value.clone(), true, true)
+        .errors
+        .contains_key("$.term"));
+    assert!(!cv_term_result(valid_value, false, true)
+        .errors
+        .contains_key("$.term"));
+}
+
+#[test]
+fn cv_term_exception_source_applies_value_requirement_and_negation() {
+    let term = serde_json::json!({
+        "cv_label": "EX", "cv_accession": "EX:1", "name": "term", "value": ""
+    });
+    assert!(cv_term_result(term.clone(), true, false)
+        .errors
+        .contains_key("$.term"));
+    assert!(!cv_term_result(term, true, true)
+        .errors
+        .contains_key("$.term"));
+}
+
+#[test]
+fn profile_schema_rejects_unknown_fields_and_keeps_dynamic_maps_open() {
+    let base = serde_json::json!({
+        "id": "https://example.org/profile",
+        "version": "1.0.0",
+        "name": "Strict profile",
+        "requirements": {}
+    });
+    for profile in [
+        serde_json::json!({"id":"x", "version":"1", "name":"n", "unknown":true}),
+        serde_json::json!({"id":"x", "version":"1", "name":"n", "configuration":{"unknown":true}}),
+        serde_json::json!({"id":"x", "version":"1", "name":"n", "requirements":{"$.x":{"code":"R","unknown":true}}}),
+        serde_json::json!({"id":"x", "version":"1", "name":"n", "requirements":{"$.x":{"code":"R","value_constraint":{"type":"regex","pattern":"x","unknown":true}}}}),
+    ] {
+        assert!(!validate_profile_value(&profile).0);
+    }
+
+    let mut dynamic = base;
+    dynamic["configuration"] = serde_json::json!({
+        "profile_validator_factory_class_arguments": {"extension_option": {"x": 1}}
+    });
+    dynamic["requirements"] = serde_json::json!({
+        "$.custom": {
+            "code": "REQ-CUSTOM",
+            "value_constraint": {
+                "type": "custom",
+                "name": "custom-check",
+                "default_arguments": {"extension_option": {"x": 1}}
+            }
+        }
+    });
+    assert!(validate_profile_value(&dynamic).0);
+}
+
+#[test]
+fn packaged_profile_schemas_match_shared_schema() {
+    let shared = fs::read(repo_root().join("shared/schema/jsonprofile.schema.json"))
+        .expect("shared schema should exist");
+    assert_eq!(
+        include_bytes!("../resources/jsonprofile.schema.json").as_slice(),
+        shared
+    );
+    assert_eq!(
+        include_bytes!("../../python/src/jsonprofile/jsonprofile.schema.json").as_slice(),
+        shared
+    );
+}
 
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))

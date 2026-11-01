@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import orjson
+
 from jsonprofile.profile import BaseCvTerm
 from jsonprofile.profile.base import CvTermFieldMapping, EnforcementLevel
 from jsonprofile.profile.constraints import (
@@ -720,3 +724,10 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
         ),
     },
 )
+
+if __name__ == "__main__":
+    profile_path = Path(
+        "../shared/resources/isa-json/profiles/metabolights-profile-0.1.0.json"
+    )
+    schema = METABOLIGHTS_BASE_PROFILE.model_dump(by_alias=True, exclude_none=True)
+    profile_path.write_bytes(orjson.dumps(schema, option=orjson.OPT_INDENT_2))
