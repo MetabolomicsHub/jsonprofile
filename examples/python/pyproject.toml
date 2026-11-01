@@ -1,0 +1,19 @@
+[project]
+name = "python-example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "oyurekten", email = "ozgury@ebi.ac.uk" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "jsonprofile[opa]",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.sources]
+jsonprofile = { path = "../../python" }

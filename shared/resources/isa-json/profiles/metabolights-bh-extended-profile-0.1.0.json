@@ -1,0 +1,37 @@
+{
+  "id": "https://github.com/ISA-tools/isa-api/metabolights-bh-extended-profile-0.1.0.json",
+  "extends": "https://github.com/ISA-tools/isa-api/metabolights-profile-0.1.0.json",
+  "version": "0.1.0",
+  "name": "MetaboLights BH Extended ISA-JSON Profile",
+  "description": "Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed studies",
+  "requirements": {
+    "$.studies[0].identifier": {
+      "code": "BH-00304",
+      "description": "Study identifier MUST start with MTBLS, REQ, MHD, or BH followed by digits.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "regex",
+        "pattern": "^(MTBLS|REQ|MHD|BH)\\d+$"
+      }
+    },
+    "$.studies[0].filename": {
+      "code": "BH-00307",
+      "description": "Study filename MUST match s_<ID>.txt or s_<ID>-study.txt.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "regex",
+        "pattern": "^s_(MTBLS|REQ|MHD|BH)\\d+(-study)?\\.txt$"
+      }
+    },
+    "$.studies[0].studyDesignDescriptors": {
+      "code": "BH-000311",
+      "description": "At least 2 design descriptors MUST be defined.",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "min_occurs": 2
+      }
+    },
+    "$.studies[0].protocols[*].description": null
+  }
+}

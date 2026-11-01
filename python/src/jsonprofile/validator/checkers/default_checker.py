@@ -646,17 +646,28 @@ class BooleanConstraintChecker(ConstraintChecker):
             ):
                 evaluation = True
             else:
-                try:
-                    if val.lower() in constraint.exceptional_false_values or []:
+                boolean_value = None
+                if isinstance(value, bool):
+                    boolean_value = value
+                elif isinstance(value, str):
+                    lower_val = val.lower()
+                    false_vals = [
+                        str(x).lower()
+                        for x in (constraint.exceptional_false_values or [])
+                        if x is not None
+                    ]
+                    true_vals = [
+                        str(x).lower()
+                        for x in (constraint.exceptional_true_values or [])
+                        if x is not None
+                    ]
+                    if lower_val in false_vals:
                         boolean_value = False
-                    elif val.lower() in constraint.exceptional_true_values or []:
+                    elif lower_val in true_vals:
                         boolean_value = True
-                    else:
-                        boolean_value = bool(val)
-                except:  # noqa: E722
-                    boolean_value = None
 
                 if boolean_value is not None:
+                    evaluation = True
                     message = f"value '{val}' evaluated as {boolean_value}"
                 else:
                     message = f"value '{val}' is not boolean"
@@ -1471,7 +1482,7 @@ class OpaPolicyConstraintChecker(ConstraintChecker):
                     )
                 )
                 opa_input = OpaPolicyInput(
-                    policy_id=constraint.policy_id,
+                    policy_ids=[constraint.policy_id],
                     value=value,
                     root=root,
                     config=config,

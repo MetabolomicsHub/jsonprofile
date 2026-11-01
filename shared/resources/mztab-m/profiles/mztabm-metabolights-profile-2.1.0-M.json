@@ -1,0 +1,431 @@
+{
+  "id": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-metabolights-profile-2.1.0-M.json",
+  "extends": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-default-profile-2.1.0-M.json",
+  "version": "2.1.0-M",
+  "name": "mzTab-M 2.1.0-M Profile for MetaboLights Submissions",
+  "description": "MetaboLights submission profile extending the HUPO-PSI mzTab-M 2.1.0-M Default Profile with stricter curation rules for contacts, samples, species ontologies, assays, protocols, study variable groups, and summary quantification",
+  "configuration": {},
+  "requirements": {
+    "$": {
+      "code": "MTBLS-0001",
+      "description": "MetaboLights mzTab-M submissions MUST define the metadata and smallMoleculeSummary sections",
+      "enforcement_level": "required",
+      "required_properties": [
+        "metadata",
+        "smallMoleculeSummary"
+      ]
+    },
+    "$.metadata": {
+      "code": "MTBLS-METADATA-0001",
+      "description": "Metadata MUST include all mandatory MetaboLights study metadata properties (including protocol, sample, contact, and study_variable_group) and is recommended to include software and publication",
+      "enforcement_level": "required",
+      "match_is_required": true,
+      "required_properties": [
+        "prefix",
+        "mzTab-version",
+        "mzTab-ID",
+        "quantification_method",
+        "ms_run",
+        "assay",
+        "study_variable",
+        "cv",
+        "database",
+        "small_molecule-quantification_unit",
+        "id_confidence_measure",
+        "study_variable_group",
+        "protocol",
+        "sample",
+        "contact"
+      ],
+      "recommended_properties": [
+        "software",
+        "publication"
+      ]
+    },
+    "$.metadata.instrument": null,
+    "$.metadata.instrument[*]": null,
+    "$.metadata.publication": {
+      "code": "MTBLS-METADATA-PUBLICATION-0001",
+      "description": "At least one publication entry is recommended in metadata",
+      "enforcement_level": "recommended",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Recommends at least 1 publication entry in metadata.publication",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.contact": {
+      "code": "MTBLS-METADATA-CONTACT-0001",
+      "description": "At least one study contact MUST be defined in metadata for MetaboLights submissions",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 contact entry in metadata.contact",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.contact[*]": {
+      "code": "MTBLS-METADATA-CONTACT-0010",
+      "description": "Each contact entry MUST define name, email, and affiliation, and is recommended to include an ORCID identifier",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name",
+        "email",
+        "affiliation"
+      ],
+      "recommended_properties": [
+        "orcid"
+      ]
+    },
+    "$.metadata.contact[*].name": {
+      "code": "MTBLS-METADATA-CONTACT-0020",
+      "description": "Contact full name MUST be at least 5 characters long",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "description": "Contact name must have a minimum length of 5 characters",
+        "minimum": 5
+      }
+    },
+    "$.metadata.contact[*].email": {
+      "code": "MTBLS-METADATA-CONTACT-0030",
+      "description": "Contact email MUST be a valid email address",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "email",
+        "description": "Contact email must conform to standard email address syntax"
+      }
+    },
+    "$.metadata.contact[*].affiliation": {
+      "code": "MTBLS-METADATA-CONTACT-0040",
+      "description": "Contact affiliation MUST be at least 2 characters long",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "description": "Contact affiliation must have a minimum length of 2 characters",
+        "minimum": 2
+      }
+    },
+    "$.metadata.contact[*].orcid": {
+      "code": "MTBLS-METADATA-CONTACT-0050",
+      "description": "Contact ORCID is recommended and, when provided, MUST match the standard 16-digit ORCID format (XXXX-XXXX-XXXX-XXXX)",
+      "enforcement_level": "recommended",
+      "value_constraint": {
+        "type": "regex",
+        "description": "ORCID identifier must match pattern ^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[X0-9]$",
+        "null_values": [
+          null,
+          "null",
+          "",
+          "\"\"",
+          "''"
+        ],
+        "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[X0-9]$",
+        "case_sensitive": true
+      }
+    },
+    "$.metadata.sample": {
+      "code": "MTBLS-METADATA-SAMPLE-0001",
+      "description": "At least one biological or experimental sample MUST be defined in metadata for MetaboLights submissions",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 sample entry in metadata.sample",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.sample[*]": {
+      "code": "MTBLS-METADATA-SAMPLE-0010",
+      "description": "Each sample entry MUST define name and species, and is recommended to include tissue and cell_type",
+      "enforcement_level": "recommended",
+      "required_properties": [
+        "name",
+        "species"
+      ],
+      "recommended_properties": [
+        "tissue",
+        "cell_type"
+      ]
+    },
+    "$.metadata.sample[*].name": {
+      "code": "MTBLS-METADATA-SAMPLE-0020",
+      "description": "Sample name MUST be at least 2 characters long",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "description": "Sample name must have a minimum length of 2 characters",
+        "minimum": 2
+      }
+    },
+    "$.metadata.sample[*].species": {
+      "code": "MTBLS-METADATA-SAMPLE-0030",
+      "description": "Each sample MUST specify at least one species ontology term",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 species CV term in sample.species",
+        "min_occurs": 1
+      }
+    },
+    "$.metadata.sample[*].species[*]": {
+      "code": "MTBLS-METADATA-SAMPLE-0031",
+      "description": "Sample species CV terms MUST be sourced from NCBITAXON, ENVO, or CHEBI ontologies (user-defined terms are not permitted)",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "allowed-cv-list",
+        "description": "Species ontology term must belong to NCBITAXON, ENVO, or CHEBI",
+        "allow_user_defined_terms": false,
+        "allowed_cv_list": [
+          "NCBITAXON",
+          "ENVO",
+          "CHEBI"
+        ]
+      }
+    },
+    "$.metadata.ms_run": {
+      "code": "MTBLS-METADATA-MS_RUN-0001",
+      "description": "At least one MS run MUST be defined in metadata",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 MS run entry in metadata.ms_run",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.ms_run[*]": {
+      "code": "MTBLS-METADATA-MS_RUN-0010",
+      "description": "Each MS run entry MUST define its data file location",
+      "enforcement_level": "required",
+      "required_properties": [
+        "location"
+      ]
+    },
+    "$.metadata.ms_run[*].instrument_ref": null,
+    "$.metadata.assay": {
+      "code": "MTBLS-METADATA-ASSAY-0001",
+      "description": "At least one assay MUST be defined in metadata",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 assay entry in metadata.assay",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.assay[*]": {
+      "code": "MTBLS-METADATA-ASSAY-0010",
+      "description": "Each assay entry MUST define name, ms_run_ref, and sample_ref for MetaboLights submissions",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name",
+        "ms_run_ref",
+        "sample_ref"
+      ]
+    },
+    "$.metadata.assay[*].sample_ref": {
+      "code": "MTBLS-METADATA-ASSAY-0020",
+      "description": "Each assay sample_ref MUST be a non-null positive integer (>= 1) referencing a declared sample",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "positive-integer",
+        "description": "Assay sample_ref must be a positive integer (>= 1) and cannot be null",
+        "null_values": [
+          null,
+          "null",
+          "",
+          "\"\"",
+          "''"
+        ],
+        "minimum": 1
+      }
+    },
+    "$.metadata.protocol": {
+      "code": "MTBLS-METADATA-PROTOCOL-0001",
+      "description": "Metadata protocols MUST include all 6 required MetaboLights protocol types (EFO:0005518, EFO:0000490, CHMO:0000470, CHMO:0001000, OBI:0200000, MI:2131)",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 protocol and all 6 standard MetaboLights protocol CV accessions to be present",
+        "min_occurs": 1,
+        "item_value_jsonpath_list": [
+          "$[*].type.cv_accession"
+        ],
+        "match_reference_values": [
+          "EFO:0005518",
+          "EFO:0000490",
+          "CHMO:0000470",
+          "CHMO:0001000",
+          "OBI:0200000",
+          "MI:2131"
+        ],
+        "min_match": 6,
+        "min_referenced_value_match": 6
+      },
+      "match_is_required": true
+    },
+    "$.metadata.protocol[*]": {
+      "code": "MTBLS-METADATA-PROTOCOL-0010",
+      "description": "Each protocol entry MUST define both name and type",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name",
+        "type"
+      ]
+    },
+    "$.metadata.protocol[*].name": {
+      "code": "MTBLS-METADATA-PROTOCOL-0020",
+      "description": "Protocol name MUST be a valid string",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "string-length",
+        "description": "Validates that protocol name is a string value"
+      }
+    },
+    "$.metadata.protocol[*].type": {
+      "description": "Validation rules for protocol type CV term definitions",
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "MTBLS-METADATA-PROTOCOL-0030",
+          "description": "Protocol type MUST be a valid ontology CV term or user-defined parameter",
+          "enforcement_level": "required",
+          "value_constraint": {
+            "type": "cv-term",
+            "description": "Protocol type must be a valid CV term (user-defined terms allowed)",
+            "allow_user_defined_terms": true
+          }
+        }
+      ]
+    },
+    "$.metadata.study_variable_group": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE_GROUP-0001",
+      "description": "At least one study variable group MUST be defined in metadata for MetaboLights submissions",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 study variable group entry in metadata.study_variable_group",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.metadata.study_variable_group[*]": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE_GROUP-0010",
+      "description": "Each study variable group MUST define name and type, and is recommended to define datatype",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name",
+        "type"
+      ],
+      "recommended_properties": [
+        "datatype"
+      ]
+    },
+    "$.metadata.study_variable_group[*].name": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE_GROUP-0020",
+      "description": "Study variable group name MUST be either a valid CV term or a string of at least 2 characters",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "group",
+        "description": "Study variable group name must satisfy either the CV term constraint or minimum string length of 2",
+        "constraints": [
+          {
+            "type": "cv-term",
+            "description": "Validates study variable group name as a CV term (user-defined terms allowed)",
+            "allow_user_defined_terms": true
+          },
+          {
+            "type": "string-length",
+            "description": "Validates study variable group name as a string of at least 2 characters",
+            "minimum": 2
+          }
+        ],
+        "join_operator": "or"
+      }
+    },
+    "$.metadata.study_variable[*]": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE-0010",
+      "description": "Each study variable MUST define name, group_refs, and assay_refs",
+      "enforcement_level": "required",
+      "required_properties": [
+        "name",
+        "group_refs",
+        "assay_refs"
+      ]
+    },
+    "$.metadata.study_variable[*].group_refs": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE-0020",
+      "description": "Each study variable MUST reference at least one study variable group in group_refs",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 group reference in study_variable.group_refs",
+        "min_occurs": 1
+      }
+    },
+    "$.metadata.study_variable[*].assay_refs": {
+      "code": "MTBLS-METADATA-STUDY_VARIABLE-0030",
+      "description": "Each study variable MUST reference at least one assay in assay_refs",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 assay reference in study_variable.assay_refs",
+        "min_occurs": 1
+      }
+    },
+    "$.smallMoleculeSummary": {
+      "code": "MTBLS-SML-0001",
+      "description": "The smallMoleculeSummary (SML) table MUST be present and contain at least one summary row",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 entry in smallMoleculeSummary",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.smallMoleculeFeature": null,
+    "$.smallMoleculeFeature[*]": null,
+    "$.smallMoleculeFeature[*].prefix": null,
+    "$.smallMoleculeFeature[*].header_prefix": null,
+    "$.smallMoleculeFeature[*].smf_id": null,
+    "$.smallMoleculeFeature[*].sme_id_refs[*]": null,
+    "$.smallMoleculeFeature[*].sme_id_ref_ambiguity_code": null,
+    "$.smallMoleculeFeature[*].adduct_ion": null,
+    "$.smallMoleculeFeature[*].isotopomer": null,
+    "$.smallMoleculeFeature[*].exp_mass_to_charge": null,
+    "$.smallMoleculeFeature[*].charge": null,
+    "$.smallMoleculeFeature[*].retention_time_in_seconds": null,
+    "$.smallMoleculeFeature[*].retention_time_in_seconds_start": null,
+    "$.smallMoleculeFeature[*].retention_time_in_seconds_end": null,
+    "$.smallMoleculeFeature[*].abundance_assay[*]": null,
+    "$.smallMoleculeFeature[*].opt[*]": null,
+    "$.smallMoleculeEvidence": null,
+    "$.smallMoleculeEvidence[*]": null,
+    "$.smallMoleculeEvidence[*].prefix": null,
+    "$.smallMoleculeEvidence[*].header_prefix": null,
+    "$.smallMoleculeEvidence[*].sme_id": null,
+    "$.smallMoleculeEvidence[*].evidence_input_id": null,
+    "$.smallMoleculeEvidence[*].database_identifier": null,
+    "$.smallMoleculeEvidence[*].chemical_formula": null,
+    "$.smallMoleculeEvidence[*].smiles": null,
+    "$.smallMoleculeEvidence[*].inchi": null,
+    "$.smallMoleculeEvidence[*].chemical_name": null,
+    "$.smallMoleculeEvidence[*].uri": null,
+    "$.smallMoleculeEvidence[*].derivatized_form": null,
+    "$.smallMoleculeEvidence[*].adduct_ion": null,
+    "$.smallMoleculeEvidence[*].exp_mass_to_charge": null,
+    "$.smallMoleculeEvidence[*].charge": null,
+    "$.smallMoleculeEvidence[*].theoretical_mass_to_charge": null,
+    "$.smallMoleculeEvidence[*].spectra_ref": null,
+    "$.smallMoleculeEvidence[*].spectra_ref[*]": null,
+    "$.smallMoleculeEvidence[*].identification_method": null,
+    "$.smallMoleculeEvidence[*].ms_level": null,
+    "$.smallMoleculeEvidence[*].id_confidence_measure[*]": null,
+    "$.smallMoleculeEvidence[*].rank": null,
+    "$.smallMoleculeEvidence[*].opt[*]": null
+  }
+}

@@ -111,22 +111,32 @@ class ConstraintChecker(abc.ABC):
                     else:
                         matches = context.unique_id_objects.get(matches)
             if not skip:
-                res = checker.validate_constraint(
-                    evaluation.constraint, matches, root=root, context=context
-                )
-                if res.is_valid:
+                if matches is None:
+                    eval_valid = (
+                        evaluation.default_evaluation
+                        if evaluation.default_evaluation is not None
+                        else True
+                    )
+                    if evaluation.negated:
+                        eval_valid = not eval_valid
+                else:
+                    res = checker.validate_constraint(
+                        evaluation.constraint, matches, root=root, context=context
+                    )
+                    eval_valid = res.is_valid
+                    if evaluation.negated:
+                        eval_valid = not eval_valid
+                if eval_valid:
                     valid_conditions.append(evaluation)
-            # elif res.message:
-            #     logger.info("%s", res.message)
 
         return self.evaluate_results(
             valid_items_count=len(valid_conditions),
             all_items_count=len(constraint.precondition.evaluations),
-            default_evaluation=evaluation.default_evaluation,
-            join_operator=evaluation.join_operator,
-            min_valid=evaluation.min_valid,
-            max_valid=evaluation.max_valid,
-            negated=evaluation.negated,
+            default_evaluation=constraint.default_precondition_evaluation,
+            join_operator=constraint.precondition.join_operator,
+            min_valid=constraint.precondition.min_valid,
+            max_valid=constraint.precondition.max_valid,
+            negated=False,
         )
 
     def evaluate_results(

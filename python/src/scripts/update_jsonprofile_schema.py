@@ -16,4 +16,13 @@ if __name__ == "__main__":
         resources.files("jsonprofile").joinpath("jsonprofile.schema.json")
     )
     schema = JsonProfile.model_json_schema(by_alias=True)
-    json_path.write_bytes(orjson.dumps(schema, option=orjson.OPT_INDENT_2))
+    schema_bytes = orjson.dumps(schema, option=orjson.OPT_INDENT_2)
+    json_path.write_bytes(schema_bytes)
+    shared_schema_path = (
+        pathlib.Path(__file__).resolve().parents[3]
+        / "shared"
+        / "schema"
+        / "jsonprofile.schema.json"
+    )
+    if shared_schema_path.parent.exists():
+        shared_schema_path.write_bytes(schema_bytes)

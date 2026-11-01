@@ -71,7 +71,7 @@ def setup_basic_logging_config(level: int = logging.INFO):
     logging.getLogger("httpx2").setLevel(logging.ERROR)
 
 
-@cached
+@cached(cache={})
 def get_jsonprofile_schema() -> dict:
     json_path = pathlib.Path(
         resources.files("jsonprofile").joinpath("jsonprofile.schema.json")

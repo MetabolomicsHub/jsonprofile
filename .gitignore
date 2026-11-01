@@ -1,8 +1,9 @@
-# Byte-compiled / optimized / DLL files
+.old/
+# Python bytecode and generated files
 __pycache__/
 *.py[codz]
 *$py.class
-
+bin/
 # C extensions
 *.so
 
@@ -217,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Rust generated files
+*.rs.bk
+*.profraw
+
+# Java / Gradle generated files
+*.class
+hs_err_pid*
+replay_pid*

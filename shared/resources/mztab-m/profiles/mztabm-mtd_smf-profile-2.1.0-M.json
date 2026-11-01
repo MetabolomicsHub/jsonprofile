@@ -1,0 +1,87 @@
+{
+  "id": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-mtd_smf-profile-2.1.0-M.json",
+  "extends": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-default-profile-2.1.0-M.json",
+  "version": "2.1.0-M",
+  "name": "mzTab-M 2.1.0-M File Profile with feature section",
+  "description": "HUPO-PSI mzTab-M 2.1.0-M Profile requiring metadata (MTD) and smallMoleculeFeature (SMF) sections while treating smallMoleculeSummary (SML) as recommended and smallMoleculeEvidence (SME) as optional",
+  "requirements": {
+    "$": {
+      "description": "Root-level section requirements for an mzTab-M document with required metadata and feature sections",
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "MTD_SML-0001",
+          "description": "Root mzTab-M object MUST contain the metadata and smallMoleculeFeature sections",
+          "enforcement_level": "required",
+          "required_properties": [
+            "metadata",
+            "smallMoleculeFeature"
+          ]
+        }
+      ]
+    },
+    "$.smallMoleculeSummary": {
+      "code": "D-SML-0001",
+      "description": "The smallMoleculeSummary (SML) table is recommended to be present with at least one summary row",
+      "enforcement_level": "recommended",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Recommends at least 1 entry in smallMoleculeSummary",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.smallMoleculeSummary[*]": {
+      "code": "D-SML-0010",
+      "description": "Each smallMoleculeSummary (SML) row MUST define all mandatory SML column properties when the SML table is present",
+      "enforcement_level": "required",
+      "required_properties": [
+        "prefix",
+        "header_prefix",
+        "sml_id",
+        "smf_id_refs",
+        "database_identifier",
+        "chemical_formula",
+        "smiles",
+        "inchi",
+        "chemical_name",
+        "uri",
+        "theoretical_neutral_mass",
+        "adduct_ions",
+        "reliability",
+        "best_id_confidence_measure",
+        "best_id_confidence_value"
+      ]
+    },
+    "$.smallMoleculeSummary[*].prefix": null,
+    "$.smallMoleculeSummary[*].header_prefix": null,
+    "$.smallMoleculeSummary[*].sml_id": null,
+    "$.smallMoleculeSummary[*].smf_id_refs[*]": null,
+    "$.smallMoleculeSummary[*].database_identifier[*]": null,
+    "$.smallMoleculeSummary[*].chemical_formula[*]": null,
+    "$.smallMoleculeSummary[*].smiles[*]": null,
+    "$.smallMoleculeSummary[*].inchi[*]": null,
+    "$.smallMoleculeSummary[*].chemical_name[*]": null,
+    "$.smallMoleculeSummary[*].uri[*]": null,
+    "$.smallMoleculeSummary[*].theoretical_neutral_mass[*]": null,
+    "$.smallMoleculeSummary[*].adduct_ions[*]": null,
+    "$.smallMoleculeSummary[*].best_id_confidence_measure": null,
+    "$.smallMoleculeSummary[*].best_id_confidence_value": null,
+    "$.smallMoleculeSummary[*].abundance_assay[*]": null,
+    "$.smallMoleculeSummary[*].abundance_study_variable[*]": null,
+    "$.smallMoleculeSummary[*].abundance_variation_study_variable[*]": null,
+    "$.smallMoleculeSummary[*].opt[*]": null,
+    "$.smallMoleculeFeature": {
+      "code": "MTD_SML-SMF-0001",
+      "description": "The smallMoleculeFeature (SMF) section MUST be present in the mzTab-M document",
+      "enforcement_level": "required",
+      "match_is_required": true
+    },
+    "$.smallMoleculeEvidence": {
+      "code": "D-MTD_SML-0001",
+      "description": "The smallMoleculeEvidence (SME) section is optional in the metadata-and-feature profile",
+      "enforcement_level": "optional",
+      "match_is_required": false
+    }
+  }
+}

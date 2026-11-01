@@ -444,6 +444,15 @@ class LocalOpaEngineFactory(OpaEngineFactory):
         if not wasm_file_path:
             raise ValueError("Invalid WASM file path")
         wasm_path = Path(wasm_file_path)
+        if not wasm_path.exists():
+            alt_parent = Path("..") / wasm_path
+            alt_stripped = Path(wasm_file_path.removeprefix("../"))
+            if alt_parent.exists():
+                wasm_path = alt_parent
+                wasm_file_path = str(alt_parent)
+            elif alt_stripped.exists():
+                wasm_path = alt_stripped
+                wasm_file_path = str(alt_stripped)
         if wasm_path in self.engines:
             return self.engines[wasm_path]
 

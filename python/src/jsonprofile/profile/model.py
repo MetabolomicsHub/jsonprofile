@@ -125,7 +125,7 @@ class FieldRequirementGroup(EnforcedRequirement):
     @field_validator("requirements", mode="before")
     @classmethod
     def validate_requirements(cls, value):
-        if value is None or not isinstance(value, dict):
+        if value is None or not isinstance(value, list):
             return value
 
         return [cls.create_requirement(x) for x in value]

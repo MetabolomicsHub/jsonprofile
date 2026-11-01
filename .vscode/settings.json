@@ -27,9 +27,11 @@
         "commitizen",
         "electrospray",
         "Metabolomics",
+        "mztab",
         "ORCID",
         "pyproject",
         "pytest",
         "sprintf"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

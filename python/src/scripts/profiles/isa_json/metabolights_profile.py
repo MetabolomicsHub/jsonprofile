@@ -187,7 +187,7 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
             value_constraint=CollectionConstraint(min_occurs=1),
         ),
         "$.studies[0].assays": FieldRequirement(
-            code="M-000308",
+            code="M-000708",
             description="At least one assay MUST be defined in ISA-JSON file",
             value_constraint=CollectionConstraint(min_occurs=1),
         ),
@@ -317,7 +317,7 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
             ]
         ),
         "$.studies[0].materials": FieldRequirement(
-            code="M-000320",
+            code="M-000420",
             description="sources and samples are required in study",
             required_properties=["sources", "samples"],
         ),
@@ -626,7 +626,7 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
                     required_properties=["annotationValue"],
                 ),
                 FieldRequirement(
-                    code="M-000453",
+                    code="M-000455",
                     enforcement_level=EnforcementLevel.RECOMMENDED,
                     description="Protocol type is not in the defined list: "
                     f"'{', '.join(str(x) for x in PREDEFINED_PROTOCOLS)}'",

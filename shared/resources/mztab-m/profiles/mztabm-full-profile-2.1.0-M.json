@@ -1,0 +1,81 @@
+{
+  "id": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-full-profile-2.1.0-M.json",
+  "extends": "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-default-profile-2.1.0-M.json",
+  "version": "2.1.0-M",
+  "name": "mzTab-M 2.1.0-M Full Profile",
+  "description": "HUPO-PSI mzTab-M 2.1.0-M Full Profile requiring all four core sections (metadata, smallMoleculeSummary, smallMoleculeFeature, and smallMoleculeEvidence) along with both summary and feature quantification units",
+  "requirements": {
+    "$": {
+      "description": "Root-level section requirements for a complete mzTab-M document containing all four core sections",
+      "enforcement_level": "required",
+      "requirements": [
+        {
+          "code": "FULL-0001",
+          "description": "A complete mzTab-M document MUST define metadata, smallMoleculeSummary, smallMoleculeFeature, and smallMoleculeEvidence sections",
+          "enforcement_level": "required",
+          "required_properties": [
+            "metadata",
+            "smallMoleculeSummary",
+            "smallMoleculeFeature",
+            "smallMoleculeEvidence"
+          ]
+        }
+      ]
+    },
+    "$.metadata.small_molecule-quantification_unit": {
+      "code": "FULL-MTD-SML_QUANTIFICATION_UNIT-0001",
+      "description": "Metadata MUST define small_molecule-quantification_unit as a valid ontology CV term or user-defined parameter",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "cv-term",
+        "description": "Small molecule quantification unit must be a valid CV term (user-defined terms allowed)",
+        "allow_user_defined_terms": true
+      },
+      "match_is_required": true
+    },
+    "$.metadata.small_molecule_feature-quantification_unit": {
+      "code": "FULL-MTD-SMF_QUANTIFICATION_UNIT-0001",
+      "description": "Metadata MUST define small_molecule_feature-quantification_unit as a valid ontology CV term or user-defined parameter",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "cv-term",
+        "description": "Small molecule feature quantification unit must be a valid CV term (user-defined terms allowed)",
+        "allow_user_defined_terms": true
+      },
+      "match_is_required": true
+    },
+    "$.smallMoleculeSummary": {
+      "code": "FULL-SML-0001",
+      "description": "The smallMoleculeSummary (SML) table MUST be present and contain at least one summary row",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 entry in smallMoleculeSummary",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.smallMoleculeFeature": {
+      "code": "FULL-SMF-0001",
+      "description": "The smallMoleculeFeature (SMF) table MUST be present and contain at least one feature row",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 entry in smallMoleculeFeature",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    },
+    "$.smallMoleculeEvidence": {
+      "code": "FULL-SME-0001",
+      "description": "The smallMoleculeEvidence (SME) table MUST be present and contain at least one evidence row",
+      "enforcement_level": "required",
+      "value_constraint": {
+        "type": "items-count",
+        "description": "Requires at least 1 entry in smallMoleculeEvidence",
+        "min_occurs": 1
+      },
+      "match_is_required": true
+    }
+  }
+}

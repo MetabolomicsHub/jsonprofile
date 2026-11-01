@@ -9,7 +9,7 @@ repos:
   hooks:
   - id: check-added-large-files
     args: [ "--maxkb=2000" ]
-    exclude: "^shared/fixtures/.+\\.json$"
+    exclude: '^shared/fixtures/.+\.json$|^python/docs/(ELIXIR-CM-MetabolomicsHub \(1\)\.pptx|JsonProfile-Python-Guide\.pptx)$'
   - id: check-toml
   - id: check-json
     exclude: .vscode/.+
@@ -24,23 +24,48 @@ repos:
   hooks:
   - id: detect-missing-init
     args: [ "--create", "--track", "--python-folders", "python/src/jsonprofile" ]
-    files: ^python/src/.+\.py$
+    files: ^python|examples/python/src/.+\.py$
 - repo: https://github.com/astral-sh/uv-pre-commit
   rev: 0.13.6
   hooks:
   - id: uv-lock
     args: [ "--project", "python" ]
-    files: ^python/(pyproject\.toml|uv\.lock)$
-
+    files: ^(python|examples/python)/(pyproject\.toml|uv\.lock)$
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.17.3
   hooks:
   - id: ruff-check
     args: [ "--config=python/pyproject.toml", "--fix" ]
-    files: ^python/.+\.py$
+    files: ^(python|examples/python)/.+\.py$
   - id: ruff-format
     args: [ "--config=python/pyproject.toml" ]
-    files: ^python/.+\.py$
+    files: ^(python|examples/python)/.+\.py$
+- repo: local
+  hooks:
+  - id: spotless-format
+    name: Format Java with Spotless
+    entry: just format-java
+    language: system
+    pass_filenames: false
+    files: ^(java|examples/java)/src/.+\.java$
+  - id: java-lint
+    name: Check Java formatting and style
+    entry: just lint-java
+    language: system
+    pass_filenames: false
+    files: ^(java|examples/java)/src/.+\.java$
+  - id: cargo-fmt
+    name: Format Rust with rustfmt
+    entry: just format-rust
+    language: system
+    pass_filenames: false
+    files: ^(rust|examples/rust)/.+\.rs$
+  - id: rust-lint
+    name: Check Rust formatting and lint
+    entry: just lint-rust
+    language: system
+    pass_filenames: false
+    files: ^(rust|examples/rust)/.+\.rs$
 - repo: https://github.com/commitizen-tools/commitizen
   rev: v4.19.3
   hooks:

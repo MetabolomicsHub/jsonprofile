@@ -129,6 +129,7 @@ def validate_requirement(
                 validated_json_paths=validated_json_paths,
                 unique_requirement_codes=unique_requirement_codes,
             )
+        return
     current_jsonpath = sub_path or ""
     is_opa_field_requirement = isinstance(requirement, OpaFieldRequirement)
     if not requirement.code:

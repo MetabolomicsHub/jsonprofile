@@ -15,7 +15,7 @@ MTD_SML_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profi
 FULL_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-full-profile-2.1.0-M.json"
 METABOLIGHTS_PROFILE_ID = "https://github.com/HUPO-PSI/mzTab-M/tree/main/schema/profiles/mztabm-metabolights-profile-2.1.0-M.json"
 
-PROFILES_PATH = "tests/resources/mztab-m/profiles"
+PROFILES_PATH = "../shared/resources/mztab-m/profiles"
 referenced_profiles = {
     DEFAULT_PROFILE_ID: f"{PROFILES_PATH}/mztabm-default-profile-2.1.0-M.json",
     MTD_SMF_PROFILE_ID: f"{PROFILES_PATH}/mztabm-mtd_smf-profile-2.1.0-M.json",
@@ -41,8 +41,8 @@ def test_example_profile(profile) -> None:
     setup_basic_logging_config()
 
     profile_path = referenced_profiles.get(profile)
-    input_json = "tests/data/manual_null_MTBLS263.mztab.json"
-    json_schema_path = "tests/resources/mztab-m/mztabm-2.1.0-M.schema.json"
+    input_json = "../shared/resources/mztab-m/manual_null_MTBLS263.mztab.json"
+    json_schema_path = "../shared/resources/mztab-m/mztabm-2.1.0-M.schema.json"
     validator = JsonValidator(
         json_schema=json_schema_path,
         profile=profile_path,
@@ -92,3 +92,22 @@ def test_example_profile(profile) -> None:
         logger.info("%s", profile)
         logger.info("SUCCESS - NO PROFILE VALIDATION MESSAGE")
         logger.info("%s", 120 * "-")
+
+    assert not result.optionals
+    if profile == MTD_SML_PROFILE_ID:
+        assert not result.errors
+        assert len(result.recommendations) == 12
+    elif profile == METABOLIGHTS_PROFILE_ID:
+        assert set(result.errors.keys()) == {
+            "$.metadata.contact",
+            "$.metadata.sample[0].species[0]",
+        }
+        assert not result.recommendations
+    else:
+        assert len(result.errors) == 20
+        assert len(result.recommendations) == 12
+        assert "$.smallMoleculeFeature[81].charge" in result.errors
+        assert "$.smallMoleculeEvidence[81].charge" in result.errors
+        assert "$.metadata.contact" in result.recommendations
+        assert "$.metadata.sample[0].species[0]" in result.recommendations
+        assert "$.metadata.ms_run[1].instrument_ref" in result.recommendations

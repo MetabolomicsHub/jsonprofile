@@ -1,0 +1,320 @@
+{
+  "version": "0.1.0",
+  "cases": [
+    {
+      "id": "scalar-constraints-and-properties",
+      "description": "Validates required/recommended properties, not-null, string-length, regex, integer, boolean, decimal, email, uri, time, string-enum, integer-enum",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" }
+        }
+      },
+      "profile": {
+        "id": "https://example.org/profiles/base-test-1.0.0.json",
+        "version": "1.0.0",
+        "name": "Base Test Profile",
+        "configuration": {
+          "object_unique_id_fields": ["@id"]
+        },
+        "requirements": {
+          "$": {
+            "code": "REQ-ROOT",
+            "enforcement_level": "required",
+            "required_properties": ["id", "title", "contact"],
+            "recommended_properties": ["summary"]
+          },
+          "$.title": {
+            "code": "REQ-TITLE",
+            "enforcement_level": "required",
+            "match_is_required": true,
+            "value_constraint": {
+              "type": "string-length",
+              "minimum": 3,
+              "maximum": 20
+            }
+          },
+          "$.orcid": {
+            "code": "REQ-ORCID",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "custom",
+              "name": "orcid"
+            }
+          },
+          "$.active": {
+            "code": "REQ-BOOL",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "boolean",
+              "exceptional_true_values": ["yes", "1"],
+              "exceptional_false_values": ["no", "0"]
+            }
+          },
+          "$.count": {
+            "code": "REQ-INT",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "positive-integer",
+              "maximum": 100
+            }
+          },
+          "$.score": {
+            "code": "REQ-DEC",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "decimal",
+              "minimum": "0.0",
+              "maximum": "10.0",
+              "max_scale": 2,
+              "allow_scientific_notation": false
+            }
+          },
+          "$.status": {
+            "code": "REQ-ENUM",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "string-enum",
+              "options": ["draft", "published"]
+            }
+          },
+          "$.contact.email": {
+            "code": "REQ-EMAIL",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "email"
+            }
+          },
+          "$.contact.homepage": {
+            "code": "REQ-URI",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "uri",
+              "allowed_schemes": ["https"]
+            }
+          },
+          "$.created_at": {
+            "code": "REQ-TIME",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "time",
+              "format": "%Y-%m-%d"
+            }
+          },
+          "$.conditional_field": {
+            "code": "REQ-PRECOND",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "not-null",
+              "precondition": {
+                "join_operator": "and",
+                "evaluations": [
+                  {
+                    "root_value_evaluation": true,
+                    "json_path": "$.status",
+                    "constraint": {
+                      "type": "string-enum",
+                      "options": ["published"]
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "$.group_field": {
+            "code": "REQ-GROUP",
+            "min_valid": 1,
+            "max_valid": 2,
+            "requirements": [
+              {
+                "code": "REQ-GROUP-1",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "regex",
+                  "pattern": "^A-[0-9]+$"
+                }
+              },
+              {
+                "code": "REQ-GROUP-2",
+                "enforcement_level": "required",
+                "value_constraint": {
+                  "type": "regex",
+                  "pattern": "^B-[0-9]+$"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "document": {
+        "id": "doc-1",
+        "title": "Hi",
+        "orcid": "invalid-orcid",
+        "active": "not-a-bool",
+        "count": 0,
+        "score": "12.345",
+        "status": "published",
+        "contact": {
+          "email": "not-an-email",
+          "homepage": "http://insecure.example.com"
+        },
+        "created_at": "2026/10/31",
+        "conditional_field": null,
+        "group_field": "A-123"
+      },
+      "expectedErrorCodes": [
+        "REQ-TITLE",
+        "REQ-ORCID",
+        "REQ-BOOL",
+        "REQ-INT",
+        "REQ-DEC",
+        "REQ-EMAIL",
+        "REQ-URI",
+        "REQ-TIME",
+        "REQ-PRECOND"
+      ],
+      "expectedRecommendationCodes": [
+        "REQ-ROOT"
+      ]
+    },
+    {
+      "id": "profile-inheritance-and-cv-terms",
+      "description": "Validates profile inheritance (extends override/delete), collection constraint, constraint group, cv-term-value, and reference fields in offline mode",
+      "parentProfile": {
+        "id": "https://example.org/profiles/parent-1.0.0.json",
+        "version": "1.0.0",
+        "name": "Parent Profile",
+        "configuration": {
+          "object_unique_id_fields": ["@id"]
+        },
+        "requirements": {
+          "$.to_delete": {
+            "code": "REQ-DEL",
+            "enforcement_level": "required",
+            "match_is_required": true
+          },
+          "$.instrument": {
+            "code": "REQ-CV-PARENT",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "allowed-cv-list",
+              "allowed_cv_list": ["MS"]
+            }
+          }
+        }
+      },
+      "profile": {
+        "id": "https://example.org/profiles/child-1.0.0.json",
+        "extends": "https://example.org/profiles/parent-1.0.0.json",
+        "version": "1.0.0",
+        "name": "Child Profile",
+        "requirements": {
+          "$.to_delete": null,
+          "$.instrument": {
+            "code": "REQ-CV-CHILD",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "allowed-cv-list",
+              "allowed_cv_list": ["MS", "UO"]
+            }
+          },
+          "$.unit": {
+            "code": "REQ-CV-ENUM",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "cv-term-enum",
+              "allowed_cv_terms": [
+                {
+                  "cv_label": "UO",
+                  "cv_accession": "UO:0000010",
+                  "name": "second"
+                }
+              ]
+            }
+          },
+          "$.cv_with_val": {
+            "code": "REQ-CV-VAL",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "cv-term-value",
+              "key_cv_term": {
+                "cv_label": "MS",
+                "cv_accession": "MS:1000010",
+                "name": " threshold"
+              },
+              "value_constraint": {
+                "type": "positive-integer"
+              }
+            }
+          },
+          "$.tags": {
+            "code": "REQ-COLL",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "items-count",
+              "min_occurs": 3
+            }
+          },
+          "$.ref_target": {
+            "code": "REQ-REF",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "string-length",
+              "is_reference_field": true,
+              "json_path": "$.label",
+              "minimum": 10
+            }
+          },
+          "$.combo": {
+            "code": "REQ-CGROUP",
+            "enforcement_level": "required",
+            "value_constraint": {
+              "type": "group",
+              "join_operator": "and",
+              "constraints": [
+                {
+                  "type": "string-length",
+                  "minimum": 2
+                },
+                {
+                  "type": "regex",
+                  "pattern": "^X-.*$"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "document": {
+        "entities": [
+          {
+            "@id": "ent-1",
+            "label": "short"
+          }
+        ],
+        "ref_target": "ent-1",
+        "instrument": "[PRIDE, PRIDE:0000001, some term, ]",
+        "unit": {
+          "cv_label": "UO",
+          "cv_accession": "UO:0000010",
+          "name": "second"
+        },
+        "cv_with_val": "[MS, MS:1000010, threshold, -5]",
+        "tags": ["a", "b"],
+        "combo": "Y-123"
+      },
+      "offlineMode": true,
+      "expectedErrorCodes": [
+        "REQ-CV-CHILD",
+        "REQ-CV-VAL",
+        "REQ-COLL",
+        "REQ-REF",
+        "REQ-CGROUP"
+      ],
+      "expectedRecommendationCodes": []
+    }
+  ]
+}

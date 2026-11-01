@@ -2,6 +2,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "MzTabMProfileValidator",
+            "request": "launch",
+            "mainClass": "org.metabolomicshub.mztabm.validation.MzTabMProfileValidator"
+        },
+        {
             "name": "Python Debugger: Current File",
             "type": "debugpy",
             "request": "launch",
