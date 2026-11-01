@@ -1,3 +1,9 @@
+## v0.2.1 (2026-11-01)
+
+### Fix
+
+- conformance updates and test improvements
+
 ## v0.2.0 (2026-11-01)
 
 ### Feat
