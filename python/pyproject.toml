@@ -5,19 +5,21 @@ description = "Dynamic profile management for json files share same schema"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "bioregistry>=0.13.64",
-    "cachetools>=7.1.4",
+    "bioregistry>=0.13.67",
+    "cachetools>=7.2.8",
     "email-validator>=2.3.0",
-    "httpx2>=0.28.1",
+    "httpx2>=2.14.0",
     "jsonpath-ng>=1.8.0",
-    # "jsonschema>=4.26.0",
-    "jsonschema-rs>=0.46.9",
+    "jsonschema-rs>=0.60.3",
     "ontology-lookup>=0.1.1",
-    "orjson>=3.11.9",
-    "pydantic>=2.12.4",
+    "orjson>=3.13.0",
+    "pydantic>=2.14.0",
     "pyyaml>=6.0.3",
     "rfc3986>=2.0.0",
 ]
+[project.urls]
+'Repository' = 'https://github.com/MetabolomicsHub/jsonprofile'
+
 [project.optional-dependencies]
 opa = ["opa-wasmtime>=0.1.1"]
 
@@ -33,7 +35,7 @@ dev = [
 
 [tool.ruff]
 target-version = "py310"
-cache-dir = "../.cache/python/ruff"
+cache-dir = ".cache/ruff"
 src = ["src"]
 
 [tool.commitizen]
@@ -58,7 +60,7 @@ known-first-party = ["jsonprofile"]
 
 [tool.pytest.ini_options]
 addopts = "-v"
-cache_dir = "../.cache/python/pytest"
+cache_dir = ".cache/pytest"
 testpaths = ["tests"]
 log_cli = true
 log_cli_level = "INFO"
