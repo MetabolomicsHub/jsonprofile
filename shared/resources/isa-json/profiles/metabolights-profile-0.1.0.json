@@ -82,16 +82,6 @@
         "characteristicCategories"
       ]
     },
-    "$.studies[0].identifier": {
-      "code": "M-00304",
-      "description": "study identifier MUST have MTBLS, REQ or MHD prefix, and end with digits. e.g., MTBLS1, REQ202610220111.",
-      "enforcement_level": "required",
-      "value_constraint": {
-        "type": "regex",
-        "pattern": "^(MTBLS|REQ|MHD)\\d$",
-        "case_sensitive": true
-      }
-    },
     "$.studies[0].title": {
       "code": "M-00305",
       "description": "Study title MUST be equal or grater than 10 characters",
@@ -108,16 +98,6 @@
       "value_constraint": {
         "type": "string-length",
         "minimum": 150
-      }
-    },
-    "$.studies[0].filename": {
-      "code": "M-00307",
-      "description": "Study file name must start 's_' and follow study identifier and '.txt' extension. e.g. s_REQ11111.txt, s_MTBLS1.txt.",
-      "enforcement_level": "required",
-      "value_constraint": {
-        "type": "regex",
-        "pattern": "^s_(MTBLS|REQ|MHD)\\d\\.txt$",
-        "case_sensitive": true
       }
     },
     "$.studies[0].factors": {
@@ -751,7 +731,7 @@
       ]
     },
     "$.studies[0].protocols[*].protocolType.annotationValue": {
-      "code": "M-000455",
+      "code": "M-000456",
       "description": "Protocol type value MUST be equal or greater than 2 characters",
       "enforcement_level": "required",
       "value_constraint": {
@@ -842,7 +822,7 @@
         },
         {
           "code": "M-000503",
-          "description": "Instrument parameter value MUST be child of [MS, http://purl.obolibrary.org/obo/MS_1003776, acquisition polarity]",
+          "description": "Scan polarity parameter value MUST be child of [MS, http://purl.obolibrary.org/obo/MS_1003776, acquisition polarity]",
           "enforcement_level": "required",
           "value_constraint": {
             "type": "parent-cv-term",

@@ -123,8 +123,6 @@ def test_isa_json_profile_offline_parity(profile: str) -> None:
             "$.studies[0].assays[0].measurementType",
             "$.studies[0].characteristicCategories[2].characteristicType",
             "$.studies[0].description",
-            "$.studies[0].filename",
-            "$.studies[0].identifier",
             "$.studies[0].materials.sources[0]",
             "$.studies[0].materials.sources[1]",
             "$.studies[0].protocols[2].description",

@@ -72,10 +72,11 @@ def _extract_cv_info(value: Any, mapping: CvTermFieldMapping) -> CvTerm:
     elif isinstance(value, dict):
         if "cv_label" in value and "cv_accession" in value:
             return CvTerm.model_validate(value)
+        name = value.get(mapping.name_field)
         return CvTerm(
             cv_label=value.get(mapping.label_field) or "",
             cv_accession=value.get(mapping.accession_field) or "",
-            name=value.get(mapping.name_field) or "",
+            name=str(name) if name is not None else "",
             value=value.get(mapping.value_field) or "",
         )
     elif isinstance(value, str):

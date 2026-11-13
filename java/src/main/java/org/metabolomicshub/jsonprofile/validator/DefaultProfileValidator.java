@@ -6,8 +6,12 @@ import java.util.Objects;
 import org.metabolomicshub.jsonprofile.profile.constraints.Constraint;
 import org.metabolomicshub.jsonprofile.validator.checkers.CustomConstraintCheckers;
 import org.metabolomicshub.jsonprofile.validator.checkers.DefaultConstraintCheckers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultProfileValidator extends ProfileValidator {
+  private static final Logger logger = LoggerFactory.getLogger(DefaultProfileValidator.class);
+
   private record CheckerKey(String type, String name) {
     @Override
     public boolean equals(Object o) {
@@ -57,6 +61,10 @@ public class DefaultProfileValidator extends ProfileValidator {
   public void registerChecker(
       String constraintType, String constraintName, ConstraintChecker checker) {
     String normName = (constraintName != null && !constraintName.isEmpty()) ? constraintName : null;
-    checkers.put(new CheckerKey(constraintType, normName), checker);
+    CheckerKey key = new CheckerKey(constraintType, normName);
+    if (checkers.put(key, checker) != null) {
+      logger.warn(
+          "{} {} checker is already in registry; replacing it", constraintType, constraintName);
+    }
   }
 }

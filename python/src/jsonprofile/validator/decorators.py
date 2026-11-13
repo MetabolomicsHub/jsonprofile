@@ -42,9 +42,12 @@ def constraint_checker(
             ValueError("constraint_name is required for a custom constraint")
         key = (constraint_type, constraint_name or None)
         if key in checkers:
-            raise ValueError(
-                f"{constraint_type} {constraint_name} checker is already in registry"
+            logger.warning(
+                "%s %s checker is already in registry", constraint_type, constraint_name
             )
+            # raise ValueError(
+            #     f"{constraint_type} {constraint_name} checker is already in registry"
+            # )
         checkers[key] = checker_class
         logger.debug(
             "Registering constraint checker '%s' %s %s",

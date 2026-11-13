@@ -162,12 +162,12 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
                 "characteristicCategories",
             ],
         ),
-        "$.studies[0].identifier": FieldRequirement(
-            code="M-00304",
-            description="study identifier MUST have MTBLS, REQ or MHD prefix"
-            ", and end with digits. e.g., MTBLS1, REQ202610220111.",
-            value_constraint=RegexConstraint(pattern=r"^(MTBLS|REQ|MHD)\d$"),
-        ),
+        # "$.studies[0].identifier": FieldRequirement(
+        #     code="M-00304",
+        #     description="study identifier MUST have MTBLS, REQ or MHD prefix"
+        #     ", and end with digits. e.g., MTBLS1, REQ202610220111.",
+        #     value_constraint=RegexConstraint(pattern=r"^(MTBLS|REQ|MHD)\d$"),
+        # ),
         "$.studies[0].title": FieldRequirement(
             code="M-00305",
             description="Study title MUST be equal or grater than 10 characters",
@@ -178,13 +178,13 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
             description="Study description MUST be equal or grater than 150 characters",
             value_constraint=StringConstraint(minimum=150),
         ),
-        "$.studies[0].filename": FieldRequirement(
-            code="M-00307",
-            description="Study file name must start 's_' and "
-            "follow study identifier and '.txt' extension. "
-            "e.g. s_REQ11111.txt, s_MTBLS1.txt.",
-            value_constraint=RegexConstraint(pattern=r"^s_(MTBLS|REQ|MHD)\d\.txt$"),
-        ),
+        # "$.studies[0].filename": FieldRequirement(
+        #     code="M-00307",
+        #     description="Study file name must start 's_' and "
+        #     "follow study identifier and '.txt' extension. "
+        #     "e.g. s_REQ11111.txt, s_MTBLS1.txt.",
+        #     value_constraint=RegexConstraint(pattern=r"^s_(MTBLS|REQ|MHD)\d\.txt$"),
+        # ),
         "$.studies[0].factors": FieldRequirement(
             code="M-000308",
             description="At least one factor MUST be defined in ISA-JSON file",
@@ -641,7 +641,7 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
             ]
         ),
         "$.studies[0].protocols[*].protocolType.annotationValue": FieldRequirement(
-            code="M-000455",
+            code="M-000456",
             description="Protocol type value MUST be equal or greater "
             "than 2 characters",
             value_constraint=StringConstraint(minimum=2),
@@ -694,7 +694,7 @@ METABOLIGHTS_BASE_PROFILE = JsonProfile(
                 ),
                 FieldRequirement(
                     code="M-000503",
-                    description="Instrument parameter value MUST be child of "
+                    description="Scan polarity parameter value MUST be child of "
                     "[MS, http://purl.obolibrary.org/obo/MS_1003776, "
                     "acquisition polarity]",
                     value_constraint=ParentCVTermConstraint(

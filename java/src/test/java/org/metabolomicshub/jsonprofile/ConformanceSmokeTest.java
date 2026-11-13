@@ -162,8 +162,6 @@ class ConformanceSmokeTest {
             "$.studies[0].assays[0].measurementType",
             "$.studies[0].characteristicCategories[2].characteristicType",
             "$.studies[0].description",
-            "$.studies[0].filename",
-            "$.studies[0].identifier",
             "$.studies[0].materials.sources[0]",
             "$.studies[0].materials.sources[1]",
             "$.studies[0].protocols[12].description",

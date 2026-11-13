@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from typing import Any
+from unittest.mock import Mock
 
 import pytest
 
+from jsonprofile.profile.base import CvTerm
 from jsonprofile.validator.default import ols_cv_term_search
 
 
@@ -85,3 +87,60 @@ def test_not_found_response_remains_cached(monkeypatch: pytest.MonkeyPatch) -> N
     assert _search() == (404, {})
     assert _search() == (404, {})
     assert calls == 1
+
+
+def test_find_cv_term_with_accession_uses_mocked_search(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    search_mock = Mock(
+        return_value=(
+            200,
+            {
+                "response": {
+                    "docs": [
+                        {
+                            "label": "water",
+                            "synonym": ["oxidane"],
+                        }
+                    ]
+                }
+            },
+        )
+    )
+    monkeypatch.setattr(ols_cv_term_search, "_search_ols", search_mock)
+
+    term, synonyms = ols_cv_term_search.OlsCvTermSearch().find_cv_term_with_accession(
+        "CHEBI", "CHEBI:15377"
+    )
+
+    assert term == CvTerm(cv_label="CHEBI", cv_accession="CHEBI:15377", name="water")
+    assert synonyms == ["oxidane"]
+    search_mock.assert_called_once()
+
+
+def test_find_cv_term_by_label_uses_mocked_search(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    search_mock = Mock(
+        return_value=(
+            200,
+            {
+                "response": {
+                    "docs": [
+                        {
+                            "obo_id": "CHEBI:15377",
+                            "iri": "http://purl.obolibrary.org/obo/CHEBI_15377",
+                            "label": "water",
+                            "ontology_prefix": "chebi",
+                        }
+                    ]
+                }
+            },
+        )
+    )
+    monkeypatch.setattr(ols_cv_term_search, "_search_ols", search_mock)
+
+    term = ols_cv_term_search.OlsCvTermSearch().find_cv_term("CHEBI", "water")
+
+    assert term == CvTerm(cv_label="CHEBI", cv_accession="CHEBI:15377", name="water")
+    search_mock.assert_called_once()

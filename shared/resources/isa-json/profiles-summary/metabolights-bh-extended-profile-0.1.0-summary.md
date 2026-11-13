@@ -43,7 +43,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 | `$.studies[0].characteristicCategories[*].characteristicType` | `M-000317` | `required` | `cv-term-enum` | If there is a characteristic type 'Organism Part', It MUST be defined as [NCIT, http://purl.obolibrary.org/obo/NCIT_C103199, Organism Part]Term is not valid | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`NCIT`, cv_accession=`http://purl.obolibrary.org/obo/NCIT_C103199`, name=`Organism Part`}], precondition=[path=`annotationValue`, (type=`regex`, pattern=`^organism part$`, case_sensitive=False)] |
 | `$.studies[0].characteristicCategories[*].characteristicType` | `M-000318` | `required` | `cv-term-enum` | If there is a characteristic type 'cell type', It MUST be defined as [EFO, http://www.ebi.ac.uk/efo/EFO_0000324, cell type]. Term is not valid | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`EFO`, cv_accession=`http://www.ebi.ac.uk/efo/EFO_0000324`, name=`cell type`}], precondition=[path=`annotationValue`, (type=`regex`, pattern=`^cell type$`, case_sensitive=False)] |
 | `$.studies[0].characteristicCategories[*].characteristicType` | `M-000319` | `required` | `cv-term-enum` | If there is a characteristic type 'disease', It MUST be defined as [MONDO, http://purl.obolibrary.org/obo/MONDO_00000019, disease]. Term is not valid | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`MONDO`, cv_accession=`http://purl.obolibrary.org/obo/MONDO_00000019`, name=`disease`}], precondition=[path=`annotationValue`, (type=`regex`, pattern=`^disease$`, case_sensitive=False)] |
-| `$.studies[0].materials` | `M-000320` | `required` | `property-check` | sources and samples are required in study | required_properties=[`sources`, `samples`] |
+| `$.studies[0].materials` | `M-000420` | `required` | `property-check` | sources and samples are required in study | required_properties=[`sources`, `samples`] |
 | `$.studies[0].materials.sources` | `M-000321` | `required` | `items-count` | There must be at least one source material | type=`items-count`, min_occurs=1 |
 | `$.studies[0].materials.sources[*]` | `M-000322` | `required` | `items-count` | Source material must have a characteristic value with type [NCIT, http://purl.obolibrary.org/obo/NCIT_C14250, Organism] | type=`items-count`, json_path=`characteristics[*].category["@id"]`, is_reference_field=True, min_match=1, item_paths=['characteristicType'], item_constraint=(type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`NCIT`, cv_accession=`http://purl.obolibrary.org/obo/NCIT_C14250`, name=`Organism`}]) |
 | `$.studies[0].materials.sources[*]` | `M-000323` | `required` | `items-count` | Source material must have a characteristic value with type [NCIT, http://purl.obolibrary.org/obo/NCIT_C103199, Organism Part] | type=`items-count`, json_path=`characteristics[*].category["@id"]`, is_reference_field=True, min_match=1, item_paths=['.characteristicType'], item_constraint=(type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`NCIT`, cv_accession=`http://purl.obolibrary.org/obo/NCIT_C103199`, name=`Organism Part`}]) |
@@ -52,7 +52,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 | `$.studies[0].materials.sources[*].characteristics[*]` | `M-000361` | `required` | `allowed-cv-list` | 'organism part' characteristic value must be from BTO, UBERON, CHEBI | type=`allowed-cv-list`, json_path=`value`, allowed_cv_list=['BTO', 'UBERON', 'NCIT', 'CHEBI'], allow_user_defined_terms=False, precondition=[path=`category["@id"]`, is_reference_field=True, (type=`cv-term-enum`, json_path=`characteristicType`, allowed_cv_terms=[{cv_label=`NCIT`, cv_accession=`http://purl.obolibrary.org/obo/NCIT_C103199`, name=`Organism Part`}])] |
 | `$.studies[0].materials.sources[*].characteristics[*]` | `M-000362` | `required` | `allowed-cv-list` | 'disease' characteristic value must be from MONDO, MP, SNOMED | type=`allowed-cv-list`, json_path=`value`, allowed_cv_list=['MONDO', 'MP', 'SNOMED'], allow_user_defined_terms=False, precondition=[path=`category["@id"]`, is_reference_field=True, (type=`cv-term-enum`, json_path=`characteristicType`, allowed_cv_terms=[{name=`disease`}])] |
 | `$.studies[0].materials.sources[*].characteristics[*]` | `M-000363` | `required` | `allowed-cv-list` | 'cell type' characteristic value must be from CL or CLO | type=`allowed-cv-list`, json_path=`value`, allowed_cv_list=['CL', 'CLO'], allow_user_defined_terms=False, precondition=[path=`category["@id"]`, is_reference_field=True, (type=`cv-term-enum`, json_path=`characteristicType`, allowed_cv_terms=[{cv_label=`EFO`, cv_accession=`http://www.ebi.ac.uk/efo/EFO_0000324`, name=`cell type`}])] |
-| `$.studies[0].assays[*]` | `M-000720` | `required` | `property-check` | sources and samples are required in study | required_properties=[`measurementType`, `technologyType`, `filename`, `materials`, `dataFiles`] |
+| `$.studies[0].assays[*]` | `M-000320` | `required` | `property-check` | sources and samples are required in study | required_properties=[`measurementType`, `technologyType`, `filename`, `materials`, `dataFiles`] |
 | `$.studies[0].protocols` | `M-000400` | `required` | `items-count` | At least one protocol MUST be defined in ISA-JSON file | type=`items-count`, min_occurs=1 |
 | `$.studies[0].protocols[*]` | `M-000401` | `required` | `property-check` | Name, description and protocol type are required | required_properties=[`name`, `description`, `protocolType`] |
 | `$.studies[0].protocols[*]` | `M-000402` | `required` | `items-count` | Mass spectrometry protocol MUST have a parameter type 'Instrument' | type=`items-count`, min_match=1, max_match=1, item_paths=['.parameters[*]'], item_constraint=(type=`string-enum`, json_path=`parameterName.annotationValue`, options=[`Instrument`]), precondition=[path=`protocolType`, (type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000470`, name=`mass spectrometry`}])] |
@@ -60,7 +60,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 | `$.studies[0].protocols[*]` | `M-000404` | `required` | `items-count` | Mass spectrometry protocol MUST have a parameter type 'Scan m/z range' | type=`items-count`, min_match=1, max_match=1, item_paths=['.parameters[*]'], item_constraint=(type=`string-enum`, json_path=`parameterName.annotationValue`, options=[`Scan m/z range`]), precondition=[path=`protocolType`, (type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000470`, name=`mass spectrometry`}])] |
 | `$.studies[0].protocols[*].name` | `M-000452` | `required` | `string-length` | Protocol name MUST be equal or greater than 2 characters | type=`string-length`, min_length=2 |
 | `$.studies[0].protocols[*].protocolType` | `M-000454` | `required` | `property-check` | Protocol type value MUST be defined. | required_properties=[`annotationValue`] |
-| `$.studies[0].protocols[*].protocolType` | `M-000453` | `recommended` | `cv-term-enum` | Protocol type is not in the defined list: '[EFO, http://www.ebi.ac.uk/efo/EFO_0005518, sample collection protocol, ], [MS, http://purl.obolibrary.org/obo/MS_1000831, sample preparation, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000470, mass spectrometry, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0001000, chromatography, ], [OBI, http://purl.obolibrary.org/obo/OBI_0200000, data transformation, ], [EDAM, http://edamontology.org/operation_4074, Compound identification, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000591, nuclear magnetic resonance spectroscopy, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0002927, NMR sample preparation, ]' | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`EFO`, cv_accession=`http://www.ebi.ac.uk/efo/EFO_0005518`, name=`sample collection protocol`}, {cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1000831`, name=`sample preparation`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000470`, name=`mass spectrometry`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0001000`, name=`chromatography`}, {cv_label=`OBI`, cv_accession=`http://purl.obolibrary.org/obo/OBI_0200000`, name=`data transformation`}, {cv_label=`EDAM`, cv_accession=`http://edamontology.org/operation_4074`, name=`Compound identification`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000591`, name=`nuclear magnetic resonance spectroscopy`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0002927`, name=`NMR sample preparation`}] |
+| `$.studies[0].protocols[*].protocolType` | `M-000455` | `recommended` | `cv-term-enum` | Protocol type is not in the defined list: '[EFO, http://www.ebi.ac.uk/efo/EFO_0005518, sample collection protocol, ], [MS, http://purl.obolibrary.org/obo/MS_1000831, sample preparation, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000470, mass spectrometry, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0001000, chromatography, ], [OBI, http://purl.obolibrary.org/obo/OBI_0200000, data transformation, ], [EDAM, http://edamontology.org/operation_4074, Compound identification, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000591, nuclear magnetic resonance spectroscopy, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0002927, NMR sample preparation, ]' | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`EFO`, cv_accession=`http://www.ebi.ac.uk/efo/EFO_0005518`, name=`sample collection protocol`}, {cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1000831`, name=`sample preparation`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000470`, name=`mass spectrometry`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0001000`, name=`chromatography`}, {cv_label=`OBI`, cv_accession=`http://purl.obolibrary.org/obo/OBI_0200000`, name=`data transformation`}, {cv_label=`EDAM`, cv_accession=`http://edamontology.org/operation_4074`, name=`Compound identification`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000591`, name=`nuclear magnetic resonance spectroscopy`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0002927`, name=`NMR sample preparation`}] |
 | `$.studies[0].protocols[*].protocolType.annotationValue` | `M-000455` | `required` | `string-length` | Protocol type value MUST be equal or greater than 2 characters | type=`string-length`, min_length=2 |
 | `$.studies[0].assays[*].technologyType` | `M-000500` | `recommended` | `cv-term-enum` | Assay technology type is not in the defined list: '[OBI, http://purl.obolibrary.org/obo/OBI_0000470, mass spectrometry assay, ], [OBI, http://purl.obolibrary.org/obo/OBI_0000623, NMR spectroscopy assay, ]' | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`OBI`, cv_accession=`http://purl.obolibrary.org/obo/OBI_0000470`, name=`mass spectrometry assay`}, {cv_label=`OBI`, cv_accession=`http://purl.obolibrary.org/obo/OBI_0000623`, name=`NMR spectroscopy assay`}] |
 | `$.studies[0].assays[*].measurementType` | `M-000501` | `required` | `cv-term-enum` | Assay technology type is not in the defined list: '[MS, http://purl.obolibrary.org/obo/MS_1003904, untargeted analysis, ], [MS, http://purl.obolibrary.org/obo/MS_1003905, targeted analysis, ], [MS, http://purl.obolibrary.org/obo/MS_1003906, semi-targeted analysis, ]' | type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1003904`, name=`untargeted analysis`}, {cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1003905`, name=`targeted analysis`}, {cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1003906`, name=`semi-targeted analysis`}] |
@@ -600,7 +600,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 ### `$.studies[0].materials`
 
-#### `M-000320` (`required` — `property-check`)
+#### `M-000420` (`required` — `property-check`)
 
 - **Description**: sources and samples are required in study
 - **Summary**: required_properties=[`sources`, `samples`]
@@ -610,7 +610,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 ```json
 {
-  "code": "M-000320",
+  "code": "M-000420",
   "description": "sources and samples are required in study",
   "enforcement_level": "required",
   "required_properties": [
@@ -949,7 +949,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 ### `$.studies[0].assays[*]`
 
-#### `M-000720` (`required` — `property-check`)
+#### `M-000320` (`required` — `property-check`)
 
 - **Description**: sources and samples are required in study
 - **Summary**: required_properties=[`measurementType`, `technologyType`, `filename`, `materials`, `dataFiles`]
@@ -959,7 +959,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 ```json
 {
-  "code": "M-000720",
+  "code": "M-000320",
   "description": "sources and samples are required in study",
   "enforcement_level": "required",
   "required_properties": [
@@ -1230,7 +1230,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 </details>
 
-#### `M-000453` (`recommended` — `cv-term-enum`)
+#### `M-000455` (`recommended` — `cv-term-enum`)
 
 - **Description**: Protocol type is not in the defined list: '[EFO, http://www.ebi.ac.uk/efo/EFO_0005518, sample collection protocol, ], [MS, http://purl.obolibrary.org/obo/MS_1000831, sample preparation, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000470, mass spectrometry, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0001000, chromatography, ], [OBI, http://purl.obolibrary.org/obo/OBI_0200000, data transformation, ], [EDAM, http://edamontology.org/operation_4074, Compound identification, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000591, nuclear magnetic resonance spectroscopy, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0002927, NMR sample preparation, ]'
 - **Summary**: type=`cv-term-enum`, allowed_cv_terms=[{cv_label=`EFO`, cv_accession=`http://www.ebi.ac.uk/efo/EFO_0005518`, name=`sample collection protocol`}, {cv_label=`MS`, cv_accession=`http://purl.obolibrary.org/obo/MS_1000831`, name=`sample preparation`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000470`, name=`mass spectrometry`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0001000`, name=`chromatography`}, {cv_label=`OBI`, cv_accession=`http://purl.obolibrary.org/obo/OBI_0200000`, name=`data transformation`}, {cv_label=`EDAM`, cv_accession=`http://edamontology.org/operation_4074`, name=`Compound identification`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0000591`, name=`nuclear magnetic resonance spectroscopy`}, {cv_label=`CHMO`, cv_accession=`http://purl.obolibrary.org/obo/CHMO_0002927`, name=`NMR sample preparation`}]
@@ -1240,7 +1240,7 @@ Child profile extending MetaboLights ISA-JSON profile for external BH-prefixed s
 
 ```json
 {
-  "code": "M-000453",
+  "code": "M-000455",
   "description": "Protocol type is not in the defined list: '[EFO, http://www.ebi.ac.uk/efo/EFO_0005518, sample collection protocol, ], [MS, http://purl.obolibrary.org/obo/MS_1000831, sample preparation, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000470, mass spectrometry, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0001000, chromatography, ], [OBI, http://purl.obolibrary.org/obo/OBI_0200000, data transformation, ], [EDAM, http://edamontology.org/operation_4074, Compound identification, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0000591, nuclear magnetic resonance spectroscopy, ], [CHMO, http://purl.obolibrary.org/obo/CHMO_0002927, NMR sample preparation, ]'",
   "enforcement_level": "recommended",
   "value_constraint": {

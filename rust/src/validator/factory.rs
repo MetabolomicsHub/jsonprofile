@@ -123,7 +123,14 @@ impl ProfileValidator for DefaultProfileValidator {
             .filter(|s| !s.is_empty())
             .map(str::to_string);
         if let Ok(mut guard) = self.checkers.write() {
-            guard.insert((constraint_type.to_string(), norm_name), checker);
+            let key = (constraint_type.to_string(), norm_name);
+            if guard.insert(key, checker).is_some() {
+                log::warn!(
+                    "{} {:?} checker is already in registry; replacing it",
+                    constraint_type,
+                    constraint_name
+                );
+            }
         }
     }
 }

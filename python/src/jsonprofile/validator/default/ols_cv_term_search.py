@@ -144,9 +144,9 @@ class OlsCvTermSearch(CvTermSearch):
             label = docs[0].get("label", "")
             synonym = docs[0].get("synonym", []) or []
             return CvTerm(
-                accession=accession,
+                cv_accession=accession,
                 name=label,
-                source=source,
+                cv_label=source,
             ), synonym
         except Exception as ex:
             logger.exception(ex)
@@ -249,9 +249,9 @@ class OlsCvTermSearch(CvTermSearch):
                 else:
                     result_accession = iri
                 term = CvTerm(
-                    accession=result_accession,
+                    cv_accession=result_accession,
                     name=label,
-                    source=result_source,
+                    cv_label=result_source,
                 )
                 if key not in self.cv_term_cache or not self.cv_term_cache[key]:
                     self.cv_term_cache[key] = term
